@@ -2,9 +2,7 @@ using System;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -38,11 +36,21 @@ public partial class App : Application
             builder.SetMinimumLevel(LogLevel.Information);
         });
         
-        collection.AddHttpClient<IStackOverflowService, StackOverflowService>(client =>
+        collection.AddHttpClient<StackOverflowService>(client =>
         {
             client.BaseAddress = new Uri("https://api.stackexchange.com/2.3/");
             client.Timeout = TimeSpan.FromSeconds(30);
             client.DefaultRequestHeaders.Add("User-Agent", "StackOverflowExtractor/1.0");
+        });
+        
+        collection.AddSingleton<ICacheService, CacheService>();
+        collection.AddSingleton<StackOverflowService>();
+        collection.AddSingleton<IStackOverflowService>(provider =>
+        {
+            var originalService = provider.GetRequiredService<StackOverflowService>();
+            var cacheService = provider.GetRequiredService<ICacheService>();
+            var logger = provider.GetRequiredService<ILogger<CachedStackOverflowService>>();
+            return new CachedStackOverflowService(originalService, cacheService, logger);
         });
         
         collection.AddTransient<MainWindowViewModel>();

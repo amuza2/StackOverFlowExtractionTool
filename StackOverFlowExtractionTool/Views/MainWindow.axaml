@@ -25,12 +25,33 @@
 
     <DockPanel Margin="10">
         <!--  Header  -->
-        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+        <StackPanel
+            DockPanel.Dock="Top"
+            Margin="0,0,0,10"
+            Spacing="5">
             <TextBlock
                 FontSize="18"
                 FontWeight="Bold"
                 Margin="0,0,0,15"
                 Text="StackOverflow Question Extractor" />
+
+            <StackPanel
+                Margin="0,10,0,0"
+                Orientation="Horizontal"
+                Spacing="10">
+
+                <Button
+                    Command="{Binding ClearCacheCommand}"
+                    Content="Clear Cache"
+                    Padding="8,2"
+                    ToolTip.Tip="Clear all cached results" />
+                <Button
+                    Command="{Binding ClearCacheForCurrentTagCommand}"
+                    Content="Clear Tag Cache"
+                    IsEnabled="{Binding Tag, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                    Padding="8,2"
+                    ToolTip.Tip="Clear cache for current tag" />
+            </StackPanel>
 
             <!--  Search Controls  -->
             <Grid ColumnDefinitions="Auto,200,Auto,Auto,Auto,Auto,*" RowDefinitions="Auto,Auto">
