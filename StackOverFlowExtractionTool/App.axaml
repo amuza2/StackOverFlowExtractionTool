@@ -1,14 +1,23 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="StackOverFlowExtractionTool.App"
-             xmlns:local="using:StackOverFlowExtractionTool"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+<Application
+    RequestedThemeVariant="Default"
+    x:Class="StackOverFlowExtractionTool.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:converters="using:StackOverFlowExtractionTool.Converters"
+    xmlns:local="using:StackOverFlowExtractionTool"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
+
+    <Application.Resources>
+        <converters:AnswerCountToColorConverter x:Key="AnswerCountToColorConverter" />
+        <converters:BooleanToColorConverter x:Key="BooleanToColorConverter" />
+        <converters:ScoreToColorConverter x:Key="ScoreToColorConverter" />
+        <converters:IsMouseOverConverter x:Key="IsMouseOverConverter" />
+    </Application.Resources>
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-  
+
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>

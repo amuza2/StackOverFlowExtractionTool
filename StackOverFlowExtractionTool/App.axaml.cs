@@ -1,9 +1,15 @@
+using System;
+using System.IO;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using StackOverFlowExtractionTool.Extensions;
+using StackOverFlowExtractionTool.Services;
 using StackOverFlowExtractionTool.ViewModels;
 using StackOverFlowExtractionTool.Views;
 
@@ -18,30 +24,40 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        BindingPlugins.DataValidators.RemoveAt(0);
+        var collection = new ServiceCollection();
+        
+        var logsDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+        Directory.CreateDirectory(logsDirectory);
+        
+        // Logging
+        collection.AddLogging(builder =>
+        {
+            builder.AddProvider(new FileLoggerProvider("logs/app.log"));
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Information);
+        });
+        
+        collection.AddHttpClient<IStackOverflowService, StackOverflowService>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.stackexchange.com/2.3/");
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.DefaultRequestHeaders.Add("User-Agent", "StackOverflowExtractor/1.0");
+        });
+        
+        collection.AddTransient<MainWindowViewModel>();
+        
+        var services = collection.BuildServiceProvider();
+        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
-            // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
-            DisableAvaloniaDataAnnotationValidation();
+            var vm = services.GetRequiredService<MainWindowViewModel>();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = vm,
             };
         }
 
         base.OnFrameworkInitializationCompleted();
-    }
-
-    private void DisableAvaloniaDataAnnotationValidation()
-    {
-        // Get an array of plugins to remove
-        var dataValidationPluginsToRemove =
-            BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
-
-        // remove each entry found
-        foreach (var plugin in dataValidationPluginsToRemove)
-        {
-            BindingPlugins.DataValidators.Remove(plugin);
-        }
     }
 }
