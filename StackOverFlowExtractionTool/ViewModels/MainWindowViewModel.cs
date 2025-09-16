@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,6 +14,7 @@ namespace StackOverFlowExtractionTool.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly IStackOverflowService _stackOverflowService;
+    private readonly ICacheService _cacheService;
 
     [ObservableProperty]
     private string _tag = string.Empty;
@@ -31,11 +30,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     private StackOverflowQuestion? _selectedQuestion;
-    
-    [ObservableProperty]
-    private int _currentPage = 1;
-
-    [ObservableProperty] private bool _hasMore;
     
     public List<PageSizeOption> Pagesizes {get;} = new()
     {
@@ -53,23 +47,33 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty] private bool _canGoToNextPage;
     
-    public string PaginationInfo => HasMore || CurrentPage > 1 
-        ? $"Page {CurrentPage} of {(HasMore ? "many" : CurrentPage)} • {Questions.Count} questions"
-        : $"{Questions.Count} questions found";
+    [ObservableProperty]
+    private bool _isUsingCache;
+    
+    [ObservableProperty]
+    private string _cacheStatus = "Cache: Ready";
+    
+    [ObservableProperty]
+    private int _cacheHits;
+    
+    [ObservableProperty]
+    private int _cacheMisses;
+    
+    [ObservableProperty]
+    private int _totalCacheRequests;
+
+    [ObservableProperty]
+    private string _cacheHitRate = "0%";
     
 
-    public MainWindowViewModel(IStackOverflowService stackOverflowService)
+    public MainWindowViewModel(IStackOverflowService stackOverflowService, ICacheService cacheService)
     {
         _stackOverflowService = stackOverflowService ?? throw new ArgumentNullException(nameof(stackOverflowService));
+        _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
         SelectedPageSize = Pagesizes.First(x => x.Value == 10);
     }
 
-    public MainWindowViewModel() : this(null!) { }
-
-    partial void OnCurrentPageChanged(int value)
-    {
-        OnPropertyChanged(nameof(PaginationInfo));
-    }
+    public MainWindowViewModel() : this(null!, null!) { }
 
     partial void OnSelectedPageSizeChanged(PageSizeOption obj)
     {
@@ -79,15 +83,17 @@ public partial class MainWindowViewModel : ViewModelBase
         if (option != null && option != SelectedPageSize)
             SelectedPageSize = option;
 
-        if (CurrentPage != 1)
-            CurrentPage = 1;
-
         if (!string.IsNullOrWhiteSpace(Tag) && !IsLoading)
         {
             _ = SearchQuestions();
         }
         
         StatusMessage = $"Page size changed to {obj.Value}. {StatusMessage}";
+    }
+    
+    partial void OnTagChanged(string value)
+    {
+        UpdateCacheStatistics();
     }
     
     [RelayCommand]
@@ -100,23 +106,30 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         IsLoading = true;
+        IsUsingCache = false;
         StatusMessage = $"Loading questions for tag: {Tag}...";
 
         try
         {
-            var questions = await _stackOverflowService.GetRecentQuestionsByTagAsync(Tag.Trim(), CurrentPage, SelectedPageSize.Value + 1);
+            var questions = await _stackOverflowService.GetRecentQuestionsByTagAsync(Tag.Trim(), 1, SelectedPageSize.Value + 1);
+            
+            UpdateCacheStatistics();
+            
             Questions.Clear();
             
-            HasMore = questions.Count > SelectedPageSize.Value;
             var questionsToShow = questions.Take(SelectedPageSize.Value).ToList();
+            
+            IsUsingCache = questionsToShow.Count > 0 && _cacheService.Contains(GenerateCacheKey());
             
             foreach (var question in questionsToShow)
             {
                 Questions.Add(question);
             }
             
+            UpdateCacheStatus();
+            
             StatusMessage = questions.Count > 0 
-                ? PaginationInfo
+                ? $"Found {questions.Count} questions for tag: {Tag}{(IsUsingCache ? " (Cached)" : "")}"
                 : $"No questions found for tag: {Tag}";
         }
         catch (ArgumentException ex)
@@ -134,14 +147,55 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task LoadFirstPage()
+    private void ClearCache()
     {
-        if (CurrentPage != 1)
+        _cacheService.Clear();
+        UpdateCacheStatus();
+        StatusMessage = "Cache cleared";
+    }
+    
+    [RelayCommand]
+    private void ClearCacheForCurrentTag()
+    {
+        var cacheKey = GenerateCacheKey();
+        if (_cacheService.Contains(cacheKey))
         {
-            CurrentPage = 1;
-            await SearchQuestions();
+            _cacheService.Remove(cacheKey);
+            UpdateCacheStatus();
+            StatusMessage = $"Cache cleared for tag: {Tag}";
+        }
+        else
+        {
+            StatusMessage = "No cache found for current tag";
         }
     }
+    
+    private string GenerateCacheKey()
+    {
+        var timeSegment = DateTime.Now.ToString("yyyyMMddHH");
+        return $"questions_{Tag.ToLowerInvariant()}_size{SelectedPageSize.Value}_{timeSegment}";
+    }
+    
+    private void UpdateCacheStatus()
+    {
+        var cacheKey = GenerateCacheKey();
+        CacheStatus = _cacheService.Contains(cacheKey) 
+            ? "Cache: Hit" 
+            : "Cache: Miss";
+    }
+    
+    private void UpdateCacheStatistics()
+    {
+        var stats = _cacheService.GetStats();
+        CacheHits = stats.Hits;
+        CacheMisses = stats.Misses;
+        TotalCacheRequests = stats.Total;
+        
+        CacheHitRate = TotalCacheRequests > 0 
+            ? $"{(CacheHits * 100.0 / TotalCacheRequests):F1}%" 
+            : "0%";
+    }
+    
 
     [RelayCommand]
     private void OpenQuestionInBrowser(StackOverflowQuestion question)

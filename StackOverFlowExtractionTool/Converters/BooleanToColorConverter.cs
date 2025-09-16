@@ -10,7 +10,7 @@ public class BooleanToColorConverter : IValueConverter
     {
         if (value is bool isAnswered)
         {
-            return isAnswered ? Brushes.Green : Brushes.Black;
+            return isAnswered ? Brushes.Green : Brushes.DeepSkyBlue;
         }
         return Brushes.Black;
     }

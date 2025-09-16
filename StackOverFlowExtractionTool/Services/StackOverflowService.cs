@@ -35,9 +35,6 @@ public class StackOverflowService : IStackOverflowService, IDisposable
         if (string.IsNullOrWhiteSpace(tag))
             throw new ArgumentException("Tag cannot be null or empty", nameof(tag));
         
-        if (pageSize < 1 || pageSize > 100)
-            throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be between 1 and 100");
-        
         try
         {
             var url = $"questions?page={page}&pagesize={pageSize}&order=desc&sort=creation&tagged={Uri.EscapeDataString(tag)}&site=stackoverflow&filter=withbody";
