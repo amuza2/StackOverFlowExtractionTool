@@ -37,7 +37,7 @@ public class StackOverflowService : IStackOverflowService, IDisposable
         
         try
         {
-            var url = $"questions?page={page}&pagesize={pageSize}&order=desc&sort=creation&tagged={Uri.EscapeDataString(tag)}&site=stackoverflow&filter=withbody";
+            var url = $"questions?page={page}&pagesize={pageSize}&order=desc&sort=creation&tagged={Uri.EscapeDataString(tag)}&site=stackoverflow&filter=!nNPvSNdWme";
             
             _logger?.LogInformation("Fetching questions for tag: {Tag}, Page: {Page}, PageSize: {PageSize}", tag, page, pageSize);
             

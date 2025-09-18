@@ -11,10 +11,11 @@ using StackOverFlowExtractionTool.Services;
 
 namespace StackOverFlowExtractionTool.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
     private readonly IStackOverflowService _stackOverflowService;
     private readonly ICacheService _cacheService;
+    private bool _disposed = false;
 
     [ObservableProperty]
     private string _tag = string.Empty;
@@ -38,6 +39,8 @@ public partial class MainWindowViewModel : ViewModelBase
         new PageSizeOption(30),
         new PageSizeOption(50),
     };
+
+    private int questionsToSearchFor = 30;
     
     [ObservableProperty]
     private PageSizeOption _selectedPageSize;
@@ -61,16 +64,40 @@ public partial class MainWindowViewModel : ViewModelBase
     
     [ObservableProperty]
     private int _totalCacheRequests;
+    
+    [ObservableProperty]
+    private FilterOptions _filterOptions = new();
 
     [ObservableProperty]
-    private string _cacheHitRate = "0%";
-    
+    private ObservableCollection<StackOverflowQuestion> _allQuestions = new();
+
+    [ObservableProperty]
+    private int _filteredCount;
+
+    [ObservableProperty]
+    private int _totalCount;
 
     public MainWindowViewModel(IStackOverflowService stackOverflowService, ICacheService cacheService)
     {
         _stackOverflowService = stackOverflowService ?? throw new ArgumentNullException(nameof(stackOverflowService));
         _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
-        SelectedPageSize = Pagesizes.First(x => x.Value == 10);
+        SelectedPageSize = Pagesizes.First(x => x.Value == questionsToSearchFor);
+        FilterOptions.FilterChanged += OnFilterChanged;
+    }
+
+    private void OnFilterChanged(object? sender, EventArgs e)
+    {
+        if (AllQuestions.Count > 0)
+            ApplyFilter();
+    }
+    
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            FilterOptions.FilterChanged -= OnFilterChanged;
+            _disposed = true;
+        }
     }
 
     public MainWindowViewModel() : this(null!, null!) { }
@@ -91,11 +118,6 @@ public partial class MainWindowViewModel : ViewModelBase
         StatusMessage = $"Page size changed to {obj.Value}. {StatusMessage}";
     }
     
-    partial void OnTagChanged(string value)
-    {
-        UpdateCacheStatistics();
-    }
-    
     [RelayCommand]
     private async Task SearchQuestions()
     {
@@ -111,26 +133,20 @@ public partial class MainWindowViewModel : ViewModelBase
 
         try
         {
-            var questions = await _stackOverflowService.GetRecentQuestionsByTagAsync(Tag.Trim(), 1, SelectedPageSize.Value + 1);
+            var questions = await _stackOverflowService.GetRecentQuestionsByTagAsync(Tag.Trim(), 1, SelectedPageSize.Value);
             
-            UpdateCacheStatistics();
-            
-            Questions.Clear();
             
             var questionsToShow = questions.Take(SelectedPageSize.Value).ToList();
             
             IsUsingCache = questionsToShow.Count > 0 && _cacheService.Contains(GenerateCacheKey());
-            
+
+            AllQuestions.Clear();
             foreach (var question in questionsToShow)
             {
-                Questions.Add(question);
+                AllQuestions.Add(question);
             }
             
-            UpdateCacheStatus();
-            
-            StatusMessage = questions.Count > 0 
-                ? $"Found {questions.Count} questions for tag: {Tag}{(IsUsingCache ? " (Cached)" : "")}"
-                : $"No questions found for tag: {Tag}";
+            ApplyFilter();
         }
         catch (ArgumentException ex)
         {
@@ -146,11 +162,60 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private void ApplyFilter()
+    {
+        if (AllQuestions.Count == 0)
+        {
+            Questions.Clear();
+            FilteredCount = 0;
+            TotalCount = 0;
+            return;
+        }
+
+        var filtered = FilterOptions.ApplyFilter(AllQuestions).ToList();
+
+        Questions.Clear();
+        foreach (var question in filtered)
+        {
+            Questions.Add(question);
+        }
+
+        FilteredCount = filtered.Count;
+        TotalCount = AllQuestions.Count;
+        
+        UpdateStatusMessage();
+    }
+    
+    private void UpdateStatusMessage()
+    {
+        if (TotalCount == 0)
+        {
+            StatusMessage = "No questions found";
+            return;
+        }
+
+        if (FilterOptions.IsFilterActive && FilterOptions.SelectedFilter?.DisplayName != "All Questions")
+        {
+            StatusMessage = $"Showing {FilteredCount} of {TotalCount} questions ({FilterOptions.SelectedFilter?.DisplayName})";
+        }
+        else
+        {
+            StatusMessage = $"Showing {TotalCount} questions";
+        }
+    }
+    
+    [RelayCommand]
+    private void ClearFilter()
+    {
+        FilterOptions.ClearFilter();
+        ApplyFilter();
+        StatusMessage = "Filter cleared";
+    }
+    
     [RelayCommand]
     private void ClearCache()
     {
         _cacheService.Clear();
-        UpdateCacheStatus();
         StatusMessage = "Cache cleared";
     }
     
@@ -161,7 +226,6 @@ public partial class MainWindowViewModel : ViewModelBase
         if (_cacheService.Contains(cacheKey))
         {
             _cacheService.Remove(cacheKey);
-            UpdateCacheStatus();
             StatusMessage = $"Cache cleared for tag: {Tag}";
         }
         else
@@ -175,27 +239,6 @@ public partial class MainWindowViewModel : ViewModelBase
         var timeSegment = DateTime.Now.ToString("yyyyMMddHH");
         return $"questions_{Tag.ToLowerInvariant()}_size{SelectedPageSize.Value}_{timeSegment}";
     }
-    
-    private void UpdateCacheStatus()
-    {
-        var cacheKey = GenerateCacheKey();
-        CacheStatus = _cacheService.Contains(cacheKey) 
-            ? "Cache: Hit" 
-            : "Cache: Miss";
-    }
-    
-    private void UpdateCacheStatistics()
-    {
-        var stats = _cacheService.GetStats();
-        CacheHits = stats.Hits;
-        CacheMisses = stats.Misses;
-        TotalCacheRequests = stats.Total;
-        
-        CacheHitRate = TotalCacheRequests > 0 
-            ? $"{(CacheHits * 100.0 / TotalCacheRequests):F1}%" 
-            : "0%";
-    }
-    
 
     [RelayCommand]
     private void OpenQuestionInBrowser(StackOverflowQuestion question)
