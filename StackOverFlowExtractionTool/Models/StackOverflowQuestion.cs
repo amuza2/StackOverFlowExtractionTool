@@ -18,6 +18,9 @@ public class StackOverflowQuestion
     [JsonPropertyName("is_answered")]
     public bool IsAnswered { get; set; }
 
+    [JsonPropertyName("accepted_answer_id")]
+    public int? AcceptedAnswerId { get; set; }
+
     [JsonPropertyName("view_count")]
     public int ViewCount { get; set; }
 
@@ -43,6 +46,8 @@ public class StackOverflowQuestion
     public string Body { get; set; } = string.Empty;
     
     public string OwnerDisplayName => Owner?.DisplayName ?? "Unknown";
+    
+    public bool HasAcceptedAnswer => AcceptedAnswerId.HasValue;
 
     public DateTime CreationDateTime => DateTimeOffset.FromUnixTimeSeconds(CreationDate).DateTime;
     public DateTime LastActivityDateTime => DateTimeOffset.FromUnixTimeSeconds(LastActivityDate).DateTime;

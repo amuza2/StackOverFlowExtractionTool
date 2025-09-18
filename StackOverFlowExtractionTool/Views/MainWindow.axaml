@@ -2,9 +2,9 @@
     Height="900"
     Icon="/Assets/avalonia-logo.ico"
     Title="StackOverFlowExtractionTool"
-    Width="600"
+    Width="700"
     d:DesignHeight="900"
-    d:DesignWidth="600"
+    d:DesignWidth="700"
     mc:Ignorable="d"
     x:Class="StackOverFlowExtractionTool.Views.MainWindow"
     x:DataType="vm:MainWindowViewModel"
@@ -23,10 +23,10 @@
         <KeyBinding Command="{Binding SearchQuestionsCommand}" Gesture="Enter" />
     </Window.KeyBindings>
 
-    <DockPanel Margin="10">
-        <!--  Header  -->
+    <Grid Margin="10" RowDefinitions="Auto,Auto,Auto,*,Auto">
+        <!--  Row 0: Header  -->
         <StackPanel
-            DockPanel.Dock="Top"
+            Grid.Row="0"
             Margin="0,0,0,10"
             Spacing="5">
             <TextBlock
@@ -34,6 +34,34 @@
                 FontWeight="Bold"
                 Margin="0,0,0,15"
                 Text="StackOverflow Question Extractor" />
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Filter:" VerticalAlignment="Center" />
+                <ComboBox
+                    ItemsSource="{Binding FilterOptions.AvailableFilters}"
+                    SelectedItem="{Binding FilterOptions.SelectedFilter}"
+                    ToolTip.Tip="Select a filter"
+                    Width="160">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock FontWeight="Bold" Text="{Binding DisplayName}" />
+                                <TextBlock
+                                    FontSize="11"
+                                    Foreground="Gray"
+                                    Text="{Binding Description}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Button
+                    Command="{Binding ClearFilterCommand}"
+                    Content="Clear Filter"
+                    IsEnabled="{Binding FilterOptions.IsFilterActive}"
+                    Padding="8,2"
+                    ToolTip.Tip="Clear current filter" />
+            </StackPanel>
 
             <StackPanel
                 Margin="0,10,0,0"
@@ -105,8 +133,8 @@
                     <ComboBox
                         DisplayMemberBinding="{Binding Display}"
                         ItemsSource="{Binding Pagesizes}"
-                        MinWidth="100"
-                        SelectedItem="{Binding SelectedPageSize}" />
+                        SelectedItem="{Binding SelectedPageSize}"
+                        Width="80" />
                 </StackPanel>
             </Grid>
 
@@ -124,16 +152,23 @@
             </Border>
         </StackPanel>
 
-        <!--  Progress Bar  -->
+        <!--  Row 1: Progress Bar  -->
         <ProgressBar
-            DockPanel.Dock="Top"
+            Grid.Row="1"
             Height="4"
             IsIndeterminate="{Binding IsLoading}"
             IsVisible="{Binding IsLoading}"
             Margin="0,0,0,10" />
 
-        <Grid>
-            <!--  Questions List  -->
+        <!--  Row 2: Spacer (only visible when progress bar is hidden)  -->
+        <Border
+            Grid.Row="2"
+            Height="0"
+            IsVisible="{Binding IsLoading, Converter={x:Static BoolConverters.Not}}"
+            Margin="0,0,0,10" />
+
+        <!--  Row 3: Main Content (Questions List)  -->
+        <Grid Grid.Row="3">
             <ListBox
                 Background="Transparent"
                 IsVisible="{Binding !IsLoading}"
@@ -255,14 +290,6 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
-
-        <!--  Bottom Panel: Actions  -->
-        <StackPanel
-            DockPanel.Dock="Bottom"
-            HorizontalAlignment="Right"
-            Margin="0,10,0,0"
-            Orientation="Horizontal"
-            Spacing="10" />
-    </DockPanel>
+    </Grid>
 
 </Window>
