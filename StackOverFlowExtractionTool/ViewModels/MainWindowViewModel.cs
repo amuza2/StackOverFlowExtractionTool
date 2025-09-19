@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using StackOverFlowExtractionTool.Extensions;
 using StackOverFlowExtractionTool.Models;
 using StackOverFlowExtractionTool.Services;
 
@@ -94,7 +96,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private ObservableCollection<StackOverflowQuestion> _recentQuestions = new();
     
-    public List<TagSubscription> Subscriptions => _notificationService.GetSubscriptions();
+    [ObservableProperty]
+    private ObservableCollection<TagSubscription> _subscriptions = new();
 
     public MainWindowViewModel(IStackOverflowService stackOverflowService, ICacheService cacheService, INotificationService notificationService, NotificationViewModel notificationViewModel)
     {
@@ -108,6 +111,19 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         // Subscribe to notification events
         _notificationService.NotificationReceived += OnNotificationReceived;
         _notificationService.NewQuestionDetected += OnNewQuestionDetected;
+        
+        UpdateSubscriptions();
+    }
+    
+    private void UpdateSubscriptions()
+    {
+        var currentSubscriptions = _notificationService.GetSubscriptions();
+        
+        Subscriptions.Clear();
+        foreach (var subscription in currentSubscriptions)
+        {
+            Subscriptions.Add(subscription);
+        }
     }
 
     private void OnNewQuestionDetected(object? sender, StackOverflowQuestion question)
@@ -354,6 +370,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
 
         _notificationService.SubscribeToTag(Tag.Trim());
+        UpdateSubscriptions();
         var subs = _notificationService.GetSubscriptions();
         Console.WriteLine($"Total subscriptions after adding {Tag}: {subs.Count}");
         foreach (var sub in subs)
@@ -362,6 +379,35 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
         
         StatusMessage = $"Subscribed to tag: {Tag}";
+    }
+
+    [RelayCommand]
+    private void UnsubscribeToTag(string tag)
+    {
+        _notificationService.UnsubscribeFromTag(tag);
+        UpdateSubscriptions();
+        StatusMessage = $"Unsubscribed from tag: {tag}";
+        Console.WriteLine($"Unsubscribed from tag: {tag}");
+    }
+    
+    [RelayCommand]
+    private async Task CopyLink(string url)
+    {
+        try
+        {
+            if (await ClipboardHelper.SetTextAsync(url))
+            {
+                StatusMessage = "Link copied to clipboard";
+            }
+            else
+            {
+                StatusMessage = "Failed to copy link";
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to copy link: {ex.Message}";
+        }
     }
 
     [RelayCommand]
@@ -394,6 +440,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private void ClearRecentQuestions()
     {
         RecentQuestions.Clear();
+        _notificationViewModel?.MarkAllAsReadCommand.Execute(null);
         StatusMessage = "Recent questions cleared";
     }
     

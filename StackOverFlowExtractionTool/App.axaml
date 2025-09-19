@@ -12,6 +12,7 @@
         <converters:BooleanToColorConverter x:Key="BooleanToColorConverter" />
         <converters:ScoreToColorConverter x:Key="ScoreToColorConverter" />
         <converters:GreaterThanConverter x:Key="GreaterThanConverter" />
+        <converters:BooleanToAnsweredTextConverter x:Key="BooleanToAnsweredTextConverter" />
 
     </Application.Resources>
 

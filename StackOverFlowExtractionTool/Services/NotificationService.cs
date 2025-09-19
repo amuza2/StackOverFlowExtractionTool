@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
-using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
 using StackOverFlowExtractionTool.Models;
 using Notification = StackOverFlowExtractionTool.Models.Notification;

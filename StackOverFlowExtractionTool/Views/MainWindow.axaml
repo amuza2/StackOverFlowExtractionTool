@@ -24,10 +24,8 @@
     </Window.KeyBindings>
 
     <TabControl Margin="10" SelectedIndex="{Binding SelectedTabIndex}">
+
         <TabItem Header="Search">
-
-
-
             <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
                 <!--  Row 0: Header  -->
                 <StackPanel
@@ -355,27 +353,89 @@
         </TabItem>
 
         <!--  Tab 2: Recent Questions  -->
-        <TabItem Header="Recent Questions">
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="Recent Questions" VerticalAlignment="Center" />
+                    <Border
+                        Background="Red"
+                        CornerRadius="9"
+                        Height="16"
+                        IsVisible="{Binding NotificationViewModel.UnreadCount, Converter={StaticResource GreaterThanConverter}, ConverterParameter=0}"
+                        VerticalAlignment="Center"
+                        Width="16">
+                        <TextBlock
+                            FontSize="10"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            Text="{Binding NotificationViewModel.UnreadCount}"
+                            VerticalAlignment="Center" />
+                    </Border>
+                </StackPanel>
+            </TabItem.Header>
             <DockPanel Margin="5">
                 <!--  Header  -->
-                <StackPanel
-                    DockPanel.Dock="Top"
-                    Margin="0,0,0,10"
-                    Orientation="Horizontal">
-                    <TextBlock
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Text="Recent Questions" />
+                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <!--  Title and Stats  -->
+                    <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+                        <TextBlock
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Text="Recent Questions" />
+                    </StackPanel>
+
+                    <!--  Active Subscriptions with Remove Buttons  -->
+                    <StackPanel
+                        Margin="0,0,0,10"
+                        Orientation="Horizontal"
+                        Spacing="5">
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Text="Subscribed Tags:"
+                            VerticalAlignment="Center" />
+                        <ItemsControl ItemsSource="{Binding Subscriptions}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Background="#E3F2FD"
+                                        CornerRadius="12"
+                                        Padding="8,4">
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <TextBlock
+                                                FontWeight="SemiBold"
+                                                Foreground="#1976D2"
+                                                Text="{Binding Tag}"
+                                                VerticalAlignment="Center" />
+                                            <Button
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).UnsubscribeToTagCommand}"
+                                                CommandParameter="{Binding Tag}"
+                                                Content="×"
+                                                FontSize="12"
+                                                FontWeight="Bold"
+                                                Foreground="Red"
+                                                Padding="4,0"
+                                                ToolTip.Tip="Unsubscribe from this tag" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!--  Action Buttons  -->
                     <Button
                         Command="{Binding ClearRecentQuestionsCommand}"
-                        Content="Clear All"
-                        Margin="10,0,0,0"
-                        Padding="8,2" />
-                    <TextBlock
-                        Foreground="Gray"
-                        Margin="10,0,0,0"
-                        Text="{Binding RecentQuestions.Count, StringFormat='({0})'}"
-                        VerticalAlignment="Center" />
+                        Content="Clear Questions"
+                        Padding="8,2"
+                        ToolTip.Tip="Clear all recent questions" />
                 </StackPanel>
 
                 <!--  Questions List  -->
@@ -391,74 +451,150 @@
                                 <StackPanel Spacing="8">
                                     <!--  Question Title  -->
                                     <TextBlock
+                                        Cursor="Hand"
                                         FontSize="14"
                                         FontWeight="Bold"
                                         Foreground="#1976D2"
                                         Text="{Binding Title}"
-                                        TextWrapping="Wrap" />
+                                        TextWrapping="Wrap">
+                                        <TextBlock.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem
+                                                    Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).OpenQuestionInBrowserCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Header="Open in Browser" />
+                                                <MenuItem
+                                                    Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).CopyLinkCommand}"
+                                                    CommandParameter="{Binding Link}"
+                                                    Header="Copy Link" />
+                                            </ContextMenu>
+                                        </TextBlock.ContextMenu>
+                                    </TextBlock>
 
                                     <!--  Question Stats  -->
                                     <StackPanel Orientation="Horizontal" Spacing="15">
                                         <StackPanel Orientation="Horizontal" Spacing="5">
                                             <TextBlock FontWeight="SemiBold" Text="Score:" />
-                                            <TextBlock Foreground="{Binding Score, Converter={StaticResource ScoreToColorConverter}}" Text="{Binding Score}" />
+                                            <TextBlock
+                                                FontWeight="Bold"
+                                                Foreground="{Binding Score, Converter={StaticResource ScoreToColorConverter}}"
+                                                Text="{Binding Score}" />
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal" Spacing="5">
                                             <TextBlock FontWeight="SemiBold" Text="Answers:" />
-                                            <TextBlock Foreground="{Binding AnswerCount, Converter={StaticResource AnswerCountToColorConverter}}" Text="{Binding AnswerCount}" />
+                                            <TextBlock
+                                                FontWeight="Bold"
+                                                Foreground="{Binding AnswerCount, Converter={StaticResource AnswerCountToColorConverter}}"
+                                                Text="{Binding AnswerCount}" />
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal" Spacing="5">
                                             <TextBlock FontWeight="SemiBold" Text="Views:" />
                                             <TextBlock Text="{Binding ViewCount}" />
                                         </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <TextBlock FontWeight="SemiBold" Text="Status:" />
+                                            <TextBlock Foreground="{Binding IsAnswered, Converter={StaticResource BooleanToColorConverter}}" Text="{Binding IsAnswered, Converter={StaticResource BooleanToAnsweredTextConverter}}" />
+                                        </StackPanel>
                                     </StackPanel>
 
                                     <!--  Tags and Time  -->
                                     <StackPanel Orientation="Horizontal" Spacing="10">
                                         <ItemsControl ItemsSource="{Binding Tags}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border
-                                                        Background="#E3F2FD"
-                                                        BorderBrush="#1976D2"
-                                                        BorderThickness="1"
-                                                        CornerRadius="4"
-                                                        Margin="0,0,4,0"
-                                                        Padding="6,3">
-                                                        <TextBlock
-                                                            FontSize="11"
-                                                            Foreground="#1976D2"
-                                                            Text="{Binding}" />
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <WrapPanel />
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border
+                                                        Background="#F0F8FF"
+                                                        BorderBrush="#87CEFA"
+                                                        BorderThickness="1"
+                                                        CornerRadius="10"
+                                                        Padding="6,3">
+                                                        <TextBlock
+                                                            FontSize="11"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="#1E90FF"
+                                                            Text="{Binding}" />
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
                                         </ItemsControl>
 
                                         <TextBlock
                                             FontSize="11"
+                                            FontStyle="Italic"
                                             Foreground="Gray"
-                                            Text="{Binding CreationDateTime, StringFormat='{}{0:MMM dd HH:mm}'}" />
+                                            Text="{Binding CreationDateTime, StringFormat='{}{0:MMM dd, yyyy HH:mm}'}" />
                                     </StackPanel>
 
-                                    <!--  Open Button  -->
-                                    <Button
-                                        Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).OpenQuestionInBrowserCommand}"
-                                        CommandParameter="{Binding}"
-                                        Content="Open in Browser"
-                                        FontSize="11"
+                                    <!--  Action Buttons  -->
+                                    <StackPanel
                                         HorizontalAlignment="Right"
-                                        Padding="8,2" />
+                                        Orientation="Horizontal"
+                                        Spacing="10">
+                                        <Button
+                                            Background="Transparent"
+                                            BorderBrush="#1976D2"
+                                            BorderThickness="1"
+                                            Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).OpenQuestionInBrowserCommand}"
+                                            CommandParameter="{Binding}"
+                                            Content="🌐 Open"
+                                            FontSize="11"
+                                            Foreground="#1976D2"
+                                            Padding="8,2" />
+
+                                        <Button
+                                            Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).CopyLinkCommand}"
+                                            CommandParameter="{Binding Link}"
+                                            Content="📋 Copy Link"
+                                            FontSize="11"
+                                            Padding="8,2"
+                                            ToolTip.Tip="Copy question link to clipboard" />
+                                    </StackPanel>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
+
+                    <!--  Empty State  -->
+                    <ListBox.Styles>
+                        <Style Selector="ListBox:empty">
+                            <Setter Property="Template">
+                                <ControlTemplate>
+                                    <StackPanel
+                                        HorizontalAlignment="Center"
+                                        Margin="40"
+                                        Spacing="15"
+                                        VerticalAlignment="Center">
+                                        <PathIcon
+                                            Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"
+                                            Foreground="LightGray"
+                                            Height="48"
+                                            Width="48" />
+                                        <TextBlock
+                                            FontSize="16"
+                                            Foreground="Gray"
+                                            HorizontalAlignment="Center"
+                                            Text="No recent questions yet"
+                                            TextAlignment="Center" />
+                                        <TextBlock
+                                            Foreground="Gray"
+                                            HorizontalAlignment="Center"
+                                            MaxWidth="300"
+                                            Text="Questions will appear here when you receive notifications"
+                                            TextAlignment="Center"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </ControlTemplate>
+                            </Setter>
+                        </Style>
+                    </ListBox.Styles>
                 </ListBox>
             </DockPanel>
         </TabItem>
