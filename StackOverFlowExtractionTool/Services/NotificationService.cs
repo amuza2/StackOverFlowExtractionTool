@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,13 +15,14 @@ namespace StackOverFlowExtractionTool.Services;
 
 public class NotificationService : INotificationService
 {
-   private readonly IStackOverflowService _stackOverflowService;
+    private readonly IStackOverflowService _stackOverflowService;
     private readonly ILogger<NotificationService> _logger;
     private readonly List<TagSubscription> _subscriptions = new();
     private WindowNotificationManager? _notificationManager;
     private CancellationTokenSource? _monitoringCts;
     private bool _isMonitoring;
-
+    private bool _enablePopupNotifications = true;
+    
     public event EventHandler<Notification>? NotificationReceived;
     public event EventHandler<StackOverflowQuestion>? NewQuestionDetected;
 
@@ -30,6 +32,21 @@ public class NotificationService : INotificationService
     {
         _stackOverflowService = stackOverflowService;
         _logger = logger;
+    }
+
+    public bool TogglePopupNotifications()
+    {
+        _enablePopupNotifications = !_enablePopupNotifications;
+        
+        if (_enablePopupNotifications)
+        {
+            Console.WriteLine("==> Toggle popup notifications: Enabled");
+        }
+        else
+        {
+            Console.WriteLine("==> Toggle popup notifications: Disabled");
+        }
+        return _enablePopupNotifications;
     }
     
     public void SetNotificationManager(WindowNotificationManager notificationManager)
@@ -57,9 +74,13 @@ public class NotificationService : INotificationService
                 Timestamp = DateTime.Now,
                 
             };
-            
-            // Show OS system notification using notify-send
-            ShowSystemNotification(notification.Title, notification.Message, notification.QuestionUrl);
+
+            if (_enablePopupNotifications)
+            {
+                Console.WriteLine("Popup notifications Enabled");
+                // Show OS system notification using notify-send
+                ShowSystemNotification(notification.Title, notification.Message, notification.QuestionUrl);
+            }
 
             // Raise event for UI notifications
             NotificationReceived?.Invoke(this, notification);
@@ -77,17 +98,37 @@ public class NotificationService : INotificationService
     {
         try
         {
+            var iconPath = String.Empty;
+            var sourceDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
+            if (sourceDir != null)
+            {
+                iconPath = Path.Combine(sourceDir, "Assets", "stack-overflow.png");
+            }
             var escapedTitle = title.Replace("\"", "\\\"");
             var escapedMessage = message.Replace("\"", "\\\"");
+            
+            _logger.LogInformation("Looking for icon at: {IconPath}", iconPath);
+            _logger.LogInformation("Icon exists: {Exists}", File.Exists(iconPath));
+        
+            if (!File.Exists(iconPath))
+            {
+                _logger.LogWarning("Custom icon not found, using fallback");
+            }
+
+            // Use icon only if file exists, otherwise use a standard icon name
+            var iconArg = File.Exists(iconPath) 
+                ? $"--icon=\"{iconPath}\"" 
+                : "--icon=dialog-information"; // or "web-browser", "mail-unread", etc.
+
         
             var startInfo = new ProcessStartInfo
             {
                 FileName = "notify-send",
                 Arguments = $"--app-name=\"StackOverflow\" " +
                             $"--urgency=normal " +
-                            $"--expire-time=8000 " +
+                            $"--expire-time=9000 " +
                             $"--category=im.received " +
-                            $"--icon=web-browser " +
+                            $"{iconArg} " +
                             $"--hint=string:x-canonical-private-synchronous:stackoverflow " +
                             $"--action=default=Open " +
                             $"\"{escapedTitle}\" \"{escapedMessage}\"",
@@ -187,6 +228,10 @@ public class NotificationService : INotificationService
             subscription.IsActive = false;
             _logger.LogInformation("Unsubscribed from tag: {Tag}", cleanTag);
         }
+        
+        var isActiveTag = _subscriptions.Any(s => s.IsActive);
+        if(!isActiveTag && _isMonitoring)
+            StopMonitoring();
     }
 
     public List<TagSubscription> GetSubscriptions() => 
@@ -236,6 +281,7 @@ public class NotificationService : INotificationService
         _monitoringCts?.Cancel();
         _isMonitoring = false;
         _logger.LogInformation("Stopped tag monitoring service");
+        Console.WriteLine("=== MONITORING SERVICE STOPPED 2 ===");
     }
 
     private async Task CheckForNewQuestionsAsync()

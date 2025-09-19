@@ -15,5 +15,6 @@ public interface INotificationService
     void StopMonitoring();
     event EventHandler<Notification>? NotificationReceived;
     event EventHandler<StackOverflowQuestion>? NewQuestionDetected;
+    bool TogglePopupNotifications();
     void TestNotification();
 }

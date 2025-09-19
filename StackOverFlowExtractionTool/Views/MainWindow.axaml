@@ -23,6 +23,32 @@
         <KeyBinding Command="{Binding SearchQuestionsCommand}" Gesture="Enter" />
     </Window.KeyBindings>
 
+    <Window.Styles>
+        <Style Selector="Border.animatedBadge">
+            <Setter Property="Background" Value="Red" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="Height" Value="18" />
+            <Setter Property="Width" Value="18" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Duration="0:0:0.3" Property="Opacity" />
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Border.animatedBadge[IsVisible=true]">
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+
+        <Style Selector="Border.animatedBadge[IsVisible=false]">
+            <Setter Property="Opacity" Value="0" />
+        </Style>
+    </Window.Styles>
+
+
+
     <TabControl Margin="10" SelectedIndex="{Binding SelectedTabIndex}">
 
         <TabItem Header="Search">
@@ -32,22 +58,17 @@
                     Grid.Row="0"
                     Margin="0,0,0,10"
                     Spacing="5">
-                    <TextBlock
-                        FontSize="18"
-                        FontWeight="Bold"
-                        Margin="0,0,0,15"
-                        Text="StackOverflow Question Extractor" />
 
                     <!--  Notification Bell Button  -->
                     <StackPanel Orientation="Horizontal">
                         <Button
                             Background="Transparent"
                             BorderThickness="0"
-                            Command="{Binding ToggleMonitoringCommand}"
-                            Content="🔔"
+                            Command="{Binding ToggleNotificationPopupCommand}"
+                            Content="{Binding BellIcon}"
                             FontSize="16"
                             Margin="0,0,10,0"
-                            ToolTip.Tip="{Binding MonitoringStatus}">
+                            ToolTip.Tip="{Binding NotificationPopupState}">
                             <Button.Styles>
                                 <Style Selector="Button:pointerover /template/ ContentPresenter">
                                     <Setter Property="Background" Value="#3A3A3A" />
@@ -59,40 +80,7 @@
                             Command="{Binding SubscribeToCurrentTagCommand}"
                             Content="Subscribe"
                             ToolTip.Tip="Subscribe to a high-activity tag for testing" />
-                        <!--  Notification Badge  -->
-                        <Border
-                            Background="Red"
-                            CornerRadius="9"
-                            Height="18"
-                            HorizontalAlignment="Right"
-                            IsVisible="{Binding NotificationViewModel.UnreadCount, Converter={StaticResource GreaterThanConverter}, ConverterParameter=0}"
-                            Margin="10,0"
-                            VerticalAlignment="Center"
-                            Width="18">
-                            <TextBlock
-                                FontSize="10"
-                                FontWeight="Bold"
-                                Foreground="White"
-                                HorizontalAlignment="Center"
-                                Text="{Binding NotificationViewModel.UnreadCount}"
-                                VerticalAlignment="Center" />
-                        </Border>
                     </StackPanel>
-
-                    <!--  Current Subscriptions  -->
-                    <ItemsControl ItemsSource="{Binding Subscriptions}" Margin="0,10,0,0">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border
-                                    Background="#E3F2FD"
-                                    CornerRadius="4"
-                                    Margin="0,2"
-                                    Padding="5,2">
-                                    <TextBlock FontWeight="Bold" Text="{Binding Tag}" />
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
 
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <TextBlock Text="Filter:" VerticalAlignment="Center" />
@@ -114,12 +102,6 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
-                        <Button
-                            Command="{Binding ClearFilterCommand}"
-                            Content="Clear Filter"
-                            IsEnabled="{Binding FilterOptions.IsFilterActive}"
-                            Padding="8,2"
-                            ToolTip.Tip="Clear current filter" />
                     </StackPanel>
 
                     <StackPanel
@@ -357,13 +339,7 @@
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Spacing="5">
                     <TextBlock Text="Recent Questions" VerticalAlignment="Center" />
-                    <Border
-                        Background="Red"
-                        CornerRadius="9"
-                        Height="16"
-                        IsVisible="{Binding NotificationViewModel.UnreadCount, Converter={StaticResource GreaterThanConverter}, ConverterParameter=0}"
-                        VerticalAlignment="Center"
-                        Width="16">
+                    <Border Classes="animatedBadge" IsVisible="{Binding NotificationViewModel.UnreadCount, Converter={StaticResource GreaterThanConverter}, ConverterParameter='0'}">
                         <TextBlock
                             FontSize="10"
                             FontWeight="Bold"
@@ -374,6 +350,7 @@
                     </Border>
                 </StackPanel>
             </TabItem.Header>
+
             <DockPanel Margin="5">
                 <!--  Header  -->
                 <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
@@ -397,7 +374,7 @@
                         <ItemsControl ItemsSource="{Binding Subscriptions}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel />
+                                    <WrapPanel ItemSpacing="5" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -440,6 +417,7 @@
 
                 <!--  Questions List  -->
                 <ListBox ItemsSource="{Binding RecentQuestions}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="models:StackOverflowQuestion">
                             <Border

@@ -99,6 +99,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private ObservableCollection<TagSubscription> _subscriptions = new();
 
+    [ObservableProperty] private bool _enablePopupNotification = true;
+    public string NotificationPopupState => EnablePopupNotification ? "🔔 Pop-up Enabled" : "🔕 Pop-up Disabled";
+    public string BellIcon => EnablePopupNotification ? "🔔" : "🔕";
+
     public MainWindowViewModel(IStackOverflowService stackOverflowService, ICacheService cacheService, INotificationService notificationService, NotificationViewModel notificationViewModel)
     {
         _stackOverflowService = stackOverflowService ?? throw new ArgumentNullException(nameof(stackOverflowService));
@@ -113,6 +117,14 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _notificationService.NewQuestionDetected += OnNewQuestionDetected;
         
         UpdateSubscriptions();
+    }
+
+    [RelayCommand]
+    private void ToggleNotificationPopup()
+    {
+        EnablePopupNotification = _notificationService.TogglePopupNotifications();
+        OnPropertyChanged(nameof(NotificationPopupState));
+        OnPropertyChanged(nameof(BellIcon));
     }
     
     private void UpdateSubscriptions()
@@ -356,6 +368,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (!string.IsNullOrWhiteSpace(Tag))
         {
+            ClearCacheCommand.Execute(null);
             await SearchQuestions();
         }
     }
@@ -372,6 +385,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _notificationService.SubscribeToTag(Tag.Trim());
         UpdateSubscriptions();
         var subs = _notificationService.GetSubscriptions();
+        var isActiveTag = subs.Any(s => s.IsActive);
+        if (isActiveTag && !IsMonitoring)
+            ToggleMonitoringCommand.Execute(null);
+        
         Console.WriteLine($"Total subscriptions after adding {Tag}: {subs.Count}");
         foreach (var sub in subs)
         {
