@@ -1,0 +1,83 @@
+<Window
+    CanResize="False"
+    ShowInTaskbar="False"
+    SizeToContent="Height"
+    Title="Notification"
+    Topmost="True"
+    WindowStartupLocation="Manual"
+    d:DesignHeight="350"
+    d:DesignWidth="500"
+    mc:Ignorable="d"
+    x:Class="StackOverFlowExtractionTool.Views.NotificationWindow"
+    x:DataType="vm:NotificationViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:StackOverFlowExtractionTool.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Window.Styles>
+        <Style Selector="Window">
+            <Setter Property="Background" Value="#2C2C2C" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+    </Window.Styles>
+
+    <DockPanel Margin="10">
+        <TextBlock
+            DockPanel.Dock="Top"
+            FontSize="16"
+            FontWeight="Bold"
+            Text="Notifications" />
+
+        <Button
+            Command="{Binding ClearAllCommand}"
+            Content="Clear All"
+            DockPanel.Dock="Top"
+            HorizontalAlignment="Right"
+            Margin="0,0,0,10" />
+
+        <ItemsControl ItemsSource="{Binding Notifications}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        Background="#3C3C3C"
+                        CornerRadius="5"
+                        Margin="0,5"
+                        Padding="10">
+                        <StackPanel>
+                            <TextBlock
+                                FontWeight="Bold"
+                                Text="{Binding Title}"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                Margin="0,5,0,0"
+                                Text="{Binding Message}"
+                                TextWrapping="Wrap" />
+                            <StackPanel
+                                Margin="0,5,0,0"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                                <TextBlock
+                                    FontSize="10"
+                                    Foreground="LightBlue"
+                                    Text="{Binding Tag}" />
+                                <TextBlock
+                                    FontSize="10"
+                                    Foreground="Gray"
+                                    Text="{Binding FormattedTime}" />
+                            </StackPanel>
+                            <!--  Command="{Binding OpenCommand}"  -->
+                            <Button
+                                Content="Open"
+                                HorizontalAlignment="Right"
+                                Margin="0,5,0,0"
+                                Padding="10,2" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DockPanel>
+
+</Window>
