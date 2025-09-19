@@ -11,6 +11,7 @@
         <converters:AnswerCountToColorConverter x:Key="AnswerCountToColorConverter" />
         <converters:BooleanToColorConverter x:Key="BooleanToColorConverter" />
         <converters:ScoreToColorConverter x:Key="ScoreToColorConverter" />
+        <converters:GreaterThanConverter x:Key="GreaterThanConverter" />
 
     </Application.Resources>
 

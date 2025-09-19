@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StackOverFlowExtractionTool.Models;
@@ -15,7 +16,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
     private readonly IStackOverflowService _stackOverflowService;
     private readonly ICacheService _cacheService;
-    private bool _disposed = false;
+    private readonly INotificationService _notificationService;
+    private bool _disposed;
 
     [ObservableProperty]
     private string _tag = string.Empty;
@@ -76,13 +78,74 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private int _totalCount;
+    
+    [ObservableProperty]
+    private bool _isMonitoring;
+    
+    [ObservableProperty]
+    private string _monitoringStatus = "Monitoring: Off";
+    
+    [ObservableProperty]
+    private NotificationViewModel _notificationViewModel;
+    
+    [ObservableProperty]
+    private int _selectedTabIndex = 0;
+    
+    [ObservableProperty]
+    private ObservableCollection<StackOverflowQuestion> _recentQuestions = new();
+    
+    public List<TagSubscription> Subscriptions => _notificationService.GetSubscriptions();
 
-    public MainWindowViewModel(IStackOverflowService stackOverflowService, ICacheService cacheService)
+    public MainWindowViewModel(IStackOverflowService stackOverflowService, ICacheService cacheService, INotificationService notificationService, NotificationViewModel notificationViewModel)
     {
         _stackOverflowService = stackOverflowService ?? throw new ArgumentNullException(nameof(stackOverflowService));
         _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+        _notificationService = notificationService;
+        NotificationViewModel = notificationViewModel;
         SelectedPageSize = Pagesizes.First(x => x.Value == questionsToSearchFor);
         FilterOptions.FilterChanged += OnFilterChanged;
+        
+        // Subscribe to notification events
+        _notificationService.NotificationReceived += OnNotificationReceived;
+        _notificationService.NewQuestionDetected += OnNewQuestionDetected;
+    }
+
+    private void OnNewQuestionDetected(object? sender, StackOverflowQuestion question)
+    {
+        AddToRecentQuestions(question);
+    }
+
+    private void OnNotificationReceived(object? sender, Notification notification)
+    {
+        NotificationViewModel.AddNotification(notification);
+    }
+    
+    private void AddToRecentQuestions(StackOverflowQuestion question)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            // Check if we already have this question (by ID)
+            var existing = RecentQuestions.FirstOrDefault(q => q.QuestionId == question.QuestionId);
+            if (existing != null)
+            {
+                // Update existing question with new data
+                RecentQuestions.Remove(existing);
+            }
+        
+            RecentQuestions.Insert(0, question);
+        
+            // Keep only the most recent 50 questions
+            if (RecentQuestions.Count > 50)
+            {
+                RecentQuestions.RemoveAt(RecentQuestions.Count - 1);
+            }
+
+            // Update status if we're on the recent questions tab
+            if (SelectedTabIndex == 1)
+            {
+                StatusMessage = $"New question added: {question.Title}";
+            }
+        });
     }
 
     private void OnFilterChanged(object? sender, EventArgs e)
@@ -96,11 +159,14 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (!_disposed)
         {
             FilterOptions.FilterChanged -= OnFilterChanged;
+            _notificationService.StopMonitoring();
+            _notificationService.NotificationReceived -= OnNotificationReceived;
+            _notificationService.NewQuestionDetected -= OnNewQuestionDetected;
             _disposed = true;
         }
     }
 
-    public MainWindowViewModel() : this(null!, null!) { }
+    public MainWindowViewModel() : this(null!, null!, null!, null!) { }
 
     partial void OnSelectedPageSizeChanged(PageSizeOption obj)
     {
@@ -109,7 +175,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         var option = Pagesizes.FirstOrDefault(x => x.Value == obj?.Value);
         if (option != null && option != SelectedPageSize)
             SelectedPageSize = option;
-
+    
         if (!string.IsNullOrWhiteSpace(Tag) && !IsLoading)
         {
             _ = SearchQuestions();
@@ -276,5 +342,64 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             await SearchQuestions();
         }
+    }
+    
+    [RelayCommand]
+    private void SubscribeToCurrentTag()
+    {
+        if (string.IsNullOrWhiteSpace(Tag))
+        {
+            StatusMessage = "Please enter a tag first";
+            return;
+        }
+
+        _notificationService.SubscribeToTag(Tag.Trim());
+        var subs = _notificationService.GetSubscriptions();
+        Console.WriteLine($"Total subscriptions after adding {Tag}: {subs.Count}");
+        foreach (var sub in subs)
+        {
+            Console.WriteLine($"- {sub.Tag} (Active: {sub.IsActive})");
+        }
+        
+        StatusMessage = $"Subscribed to tag: {Tag}";
+    }
+
+    [RelayCommand]
+    private async Task ToggleMonitoring()
+    {
+        if (IsMonitoring)
+        {
+            _notificationService.StopMonitoring();
+            IsMonitoring = false;
+            MonitoringStatus = "Monitoring: Off";
+            StatusMessage = "Monitoring stopped";
+        }
+        else
+        {
+            await _notificationService.StartMonitoringAsync();
+            IsMonitoring = true;
+            MonitoringStatus = "Monitoring: On";
+            StatusMessage = "Monitoring started";
+        }
+    }
+    
+    [RelayCommand]
+    private void TestNotification()
+    {
+        _notificationService.TestNotification();
+        StatusMessage = "Test notification sent!";
+    }
+    
+    [RelayCommand]
+    private void ClearRecentQuestions()
+    {
+        RecentQuestions.Clear();
+        StatusMessage = "Recent questions cleared";
+    }
+    
+    [RelayCommand]
+    private void ShowRecentQuestions()
+    {
+        SelectedTabIndex = 1;
     }
 }

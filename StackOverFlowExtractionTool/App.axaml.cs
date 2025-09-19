@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Notifications;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,6 +54,10 @@ public partial class App : Application
             return new CachedStackOverflowService(originalService, cacheService, logger);
         });
         
+        collection.AddSingleton<INotificationService, NotificationService>();
+        collection.AddSingleton<NotificationWindow>();
+        collection.AddSingleton<NotificationViewModel>();
+        
         collection.AddTransient<MainWindowViewModel>();
         
         var services = collection.BuildServiceProvider();
@@ -60,10 +65,26 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var vm = services.GetRequiredService<MainWindowViewModel>();
-            desktop.MainWindow = new MainWindow
+            var mainWindow = new MainWindow
             {
                 DataContext = vm,
             };
+            desktop.MainWindow = mainWindow;
+            
+            // WindowNotificationManager
+            var notificationManager = new WindowNotificationManager(mainWindow)
+            {
+                Position = NotificationPosition.BottomRight,
+                MaxItems = 3
+            };
+            
+            var notificationService = services.GetRequiredService<INotificationService>();
+            if (notificationService is NotificationService concreteNotificationService)
+            {
+                // You'll need to add a method to set the notification manager
+                concreteNotificationService.SetNotificationManager(notificationManager);
+            }
+
         }
 
         base.OnFrameworkInitializationCompleted();
