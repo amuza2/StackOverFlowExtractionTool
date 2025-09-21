@@ -13,6 +13,7 @@ Search, filter, subscribe and get notified to the recent questions
 
 <img width="384" height="591" alt="image" src="https://github.com/user-attachments/assets/212fd03a-1edb-4afb-8b49-5a347aab8e6e" />
 
+Note: currently I am focusing on the implementation, once I finish the features that I planned I will improve the design.
 
 ## Getting Started
 
@@ -46,3 +47,4 @@ If you encounter any issues or have questions:
 - Avalonia UI team for the excellent cross-platform framework
 - Microsoft for the Community Toolkit
 - The open-source community for inspiration and resources
+
