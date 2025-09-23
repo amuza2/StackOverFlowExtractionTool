@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq; 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using StackOverFlowExtractionTool.Models;
 
 namespace StackOverFlowExtractionTool.ViewModels;
@@ -15,7 +16,8 @@ public partial class NotificationViewModel : ViewModelBase
 
     [ObservableProperty]
     private int _unreadCount;
-
+    
+    
     [RelayCommand]
     private void OpenNotification(Notification notification)
     {
@@ -35,7 +37,7 @@ public partial class NotificationViewModel : ViewModelBase
             Debug.WriteLine($"Failed to open URL: {ex.Message}");
         }
     }
-
+    
     [RelayCommand]
     private void MarkAllAsRead()
     {

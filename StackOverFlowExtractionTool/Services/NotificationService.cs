@@ -7,13 +7,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using StackOverFlowExtractionTool.Models;
 using Notification = StackOverFlowExtractionTool.Models.Notification;
 
 namespace StackOverFlowExtractionTool.Services;
 
-public class NotificationService : INotificationService
+public partial class NotificationService : INotificationService
 {
     private readonly IStackOverflowService _stackOverflowService;
     private readonly ILogger<NotificationService> _logger;
@@ -25,6 +26,7 @@ public class NotificationService : INotificationService
     
     public event EventHandler<Notification>? NotificationReceived;
     public event EventHandler<StackOverflowQuestion>? NewQuestionDetected;
+    public event EventHandler? SubscriptionChanged;
 
     public NotificationService(
         IStackOverflowService stackOverflowService,
@@ -92,7 +94,7 @@ public class NotificationService : INotificationService
             _logger.LogError(ex, "Error showing notification");
         }
     }
-    
+
     private readonly ConcurrentDictionary<int, string> _activeNotifications = new();
     private void ShowSystemNotification(string title, string message, string url)
     {
@@ -195,7 +197,7 @@ public class NotificationService : INotificationService
             _logger.LogError(ex, "Failed to open URL: {Url}", url);
         }
     }
-
+    
     public void SubscribeToTag(string tag)
     {
         var cleanTag = tag.Trim().ToLower();
@@ -350,8 +352,6 @@ public class NotificationService : INotificationService
         }
         Console.WriteLine("=== CHECK COMPLETE ===");
     }
-    
-    
     
     public void TestNotification()
     {

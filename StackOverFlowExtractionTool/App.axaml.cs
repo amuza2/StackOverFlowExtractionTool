@@ -59,6 +59,9 @@ public partial class App : Application
         collection.AddSingleton<NotificationViewModel>();
         
         collection.AddTransient<MainWindowViewModel>();
+        collection.AddTransient<SearchTabViewModel>();
+        collection.AddTransient<RecentQuestionsViewModel>();
+        collection.AddTransient<SettingsViewModel>();
         
         var services = collection.BuildServiceProvider();
         
