@@ -13,6 +13,13 @@
         <converters:ScoreToColorConverter x:Key="ScoreToColorConverter" />
         <converters:GreaterThanConverter x:Key="GreaterThanConverter" />
         <converters:BooleanToAnsweredTextConverter x:Key="BooleanToAnsweredTextConverter" />
+        <converters:StringIsNotAllConverter x:Key="StringIsNotAllConverter" />
+        <converters:BooleanToUnreadBackgroundConverter x:Key="BooleanToUnreadBackgroundConverter" />
+        <converters:BooleanToUnreadColorConverter x:Key="BooleanToUnreadColorConverter" />
+        <converters:StringEqualityToBrushConverter x:Key="StringEqualityToBrushConverter" />
+        <converters:StringEqualityToForegroundConverter x:Key="StringEqualityToForegroundConverter" />
+        <converters:BooleanToTagBackgroundConverter x:Key="BooleanToTagBackgroundConverter" />
+        <converters:BooleanToTagForegroundConverter x:Key="BooleanToTagForegroundConverter" />
 
     </Application.Resources>
 
