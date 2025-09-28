@@ -1,19 +1,17 @@
 using System;
 using Avalonia.Data.Converters;
-using Avalonia.Media;
 
 namespace StackOverFlowExtractionTool.Converters;
 
-public class ScoreToColorConverter : IValueConverter
+public class BooleanToMonitoringButtonColorConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
     {
-        if (value is int score)
+        if (value is bool isMonitoring)
         {
-            if (score > 0) return new SolidColorBrush(0xFF4ADE80); // Success
-            if (score < 0) return new SolidColorBrush(0xFFF87171); // Error
+            return isMonitoring ? "#DC2626" : "#059669"; // Red for stop, green for start
         }
-        return new SolidColorBrush(0xFF94A3B8); // Secondary
+        return "#6B7280";
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)

@@ -4,16 +4,15 @@ using Avalonia.Media;
 
 namespace StackOverFlowExtractionTool.Converters;
 
-public class ScoreToColorConverter : IValueConverter
+public class BooleanToMonitoringBackgroundConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
     {
-        if (value is int score)
+        if (value is bool isMonitoring)
         {
-            if (score > 0) return new SolidColorBrush(0xFF4ADE80); // Success
-            if (score < 0) return new SolidColorBrush(0xFFF87171); // Error
+            return isMonitoring ? new SolidColorBrush(0xFF065F46) : new SolidColorBrush(0xFF374151); // Dark green : Dark gray
         }
-        return new SolidColorBrush(0xFF94A3B8); // Secondary
+        return new SolidColorBrush(0xFF374151);
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
@@ -21,3 +20,6 @@ public class ScoreToColorConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+
+

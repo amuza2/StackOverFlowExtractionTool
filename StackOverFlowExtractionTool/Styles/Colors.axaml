@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  Add Resources Here  -->
+    <!--  Primary Colors  -->
+    <Color x:Key="ThemePrimaryColor">#6366F1</Color>
+    <Color x:Key="ThemeSecondaryColor">#8B5CF6</Color>
+    <Color x:Key="ThemeAccentColor">#06B6D4</Color>
+
+    <!--  Background Colors  -->
+    <Color x:Key="ThemeBackgroundColor">#0F0F23</Color>
+    <Color x:Key="ThemeCardBackground">#1A1B26</Color>
+    <Color x:Key="ThemeSectionBackground">#161722</Color>
+    <Color x:Key="ThemeHoverBackground">#2A2B3D</Color>
+
+    <!--  Text Colors  -->
+    <Color x:Key="ThemePrimaryText">#E2E8F0</Color>
+    <Color x:Key="ThemeSecondaryText">#94A3B8</Color>
+    <Color x:Key="ThemeAccentText">#38BDF8</Color>
+    <Color x:Key="ThemeSuccessText">#4ADE80</Color>
+    <Color x:Key="ThemeWarningText">#FBBF24</Color>
+    <Color x:Key="ThemeErrorText">#F87171</Color>
+
+    <!--  Border Colors  -->
+    <Color x:Key="ThemeBorderColor">#2D3748</Color>
+    <Color x:Key="ThemeBorderHover">#4A5568</Color>
+
+    <!--  Status Colors  -->
+    <Color x:Key="ThemeOnlineColor">#10B981</Color>
+    <Color x:Key="ThemeOfflineColor">#6B7280</Color>
+    <Color x:Key="ThemeBusyColor">#F59E0B</Color>
+
+</ResourceDictionary>

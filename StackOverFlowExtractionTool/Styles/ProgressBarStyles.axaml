@@ -1,0 +1,34 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!--  Add Controls for Previewer Here  -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!--  Add Styles Here  -->
+    <Style Selector="ProgressBar">
+        <Setter Property="Background" Value="{DynamicResource SectionBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonGradient}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Height" Value="4" />
+        <Setter Property="CornerRadius" Value="2" />
+    </Style>
+
+    <Style Selector="ProgressBar:indeterminate">
+        <Setter Property="Background" Value="{DynamicResource SectionBackgroundBrush}" />
+    </Style>
+
+    <Style Selector="ProgressBar.loading-bar">
+        <Setter Property="Height" Value="4" />
+        <Setter Property="Width" Value="200" />
+    </Style>
+
+    <!--  Settings slider style  -->
+    <Style Selector="Slider.settings-slider">
+        <Setter Property="Background" Value="{DynamicResource SectionBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonGradient}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Height" Value="24" />
+    </Style>
+
+</Styles>

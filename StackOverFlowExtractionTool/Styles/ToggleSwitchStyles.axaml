@@ -1,0 +1,86 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!--  Add Controls for Previewer Here  -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!--  Add Styles Here  -->
+    <!--  ToggleButton Styles  -->
+    <Style Selector="ToggleButton">
+        <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="24" />
+        <Setter Property="CornerRadius" Value="12" />
+    </Style>
+
+    <Style Selector="ToggleButton:checked">
+        <Setter Property="Background" Value="{DynamicResource OnlineBrush}" />
+    </Style>
+
+    <Style Selector="ToggleButton /template/ ContentPresenter">
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+
+    <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+
+    <!--  CheckBox Styles  -->
+    <Style Selector="CheckBox">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style Selector="CheckBox:checked /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AccentTextBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentTextBrush}" />
+    </Style>
+
+    <!--  Settings-specific toggle styles  -->
+    <Style Selector="ToggleButton.notification-toggle">
+        <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Width" Value="52" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="CornerRadius" Value="14" />
+    </Style>
+
+    <Style Selector="ToggleButton.sound-toggle">
+        <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Width" Value="52" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="CornerRadius" Value="14" />
+    </Style>
+
+    <Style Selector="ToggleButton.monitoring-toggle">
+        <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Width" Value="52" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="CornerRadius" Value="14" />
+    </Style>
+
+    <!--  Checkbox styles for settings  -->
+    <Style Selector="CheckBox.settings-checkbox">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style Selector="CheckBox.settings-checkbox:checked">
+        <Setter Property="Background" Value="{DynamicResource AccentTextBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentTextBrush}" />
+    </Style>
+
+</Styles>

@@ -10,9 +10,9 @@ public class BooleanToColorConverter : IValueConverter
     {
         if (value is bool isAnswered)
         {
-            return isAnswered ? Brushes.Green : Brushes.DimGray;
+            return isAnswered ? new SolidColorBrush(0xFF4ADE80) : new SolidColorBrush(0xFF94A3B8); // Success : Secondary
         }
-        return Brushes.Black;
+        return new SolidColorBrush(0xFFE2E8F0); // Primary text
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)

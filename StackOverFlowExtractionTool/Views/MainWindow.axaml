@@ -19,172 +19,163 @@
     <!--     <vm:MainWindowViewModel /> -->
     <!-- </Design.DataContext> -->
 
-    <Window.Styles>
-        <Style Selector="Border.animatedBadge">
-            <Setter Property="Background" Value="Red" />
-            <Setter Property="CornerRadius" Value="9" />
-            <Setter Property="Height" Value="18" />
-            <Setter Property="Width" Value="18" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Transitions">
-                <Transitions>
-                    <DoubleTransition Duration="0:0:0.3" Property="Opacity" />
-                </Transitions>
-            </Setter>
-        </Style>
-
-        <Style Selector="Border.animatedBadge[IsVisible=true]">
-            <Setter Property="Opacity" Value="1" />
-        </Style>
-
-        <Style Selector="Border.animatedBadge[IsVisible=false]">
-            <Setter Property="Opacity" Value="0" />
-        </Style>
-    </Window.Styles>
-
-
-
     <TabControl Margin="10" SelectedIndex="{Binding SelectedTabIndex}">
 
         <TabItem Header="Search">
-            <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+            <Grid Background="{DynamicResource BackgroundBrush}" RowDefinitions="Auto,Auto,Auto,*,Auto">
                 <!--  Row 0: Header  -->
                 <StackPanel
                     Grid.Row="0"
-                    Margin="0,0,0,10"
-                    Spacing="5">
-
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="Filter:" VerticalAlignment="Center" />
+                    Margin="0,0,0,16"
+                    Spacing="8">
+                    <!--  Filter Section  -->
+                    <StackPanel
+                        Margin="0,0,0,8"
+                        Orientation="Horizontal"
+                        Spacing="12">
+                        <TextBlock
+                            Classes="body"
+                            Text="Filter:"
+                            VerticalAlignment="Center" />
                         <ComboBox
+                            Classes="combo-filter"
                             ItemsSource="{Binding SearchTab.FilterOptions.AvailableFilters}"
                             SelectedItem="{Binding SearchTab.FilterOptions.SelectedFilter}"
                             ToolTip.Tip="Select a filter"
-                            Width="160">
+                            Width="180">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
-                                        <TextBlock FontWeight="Bold" Text="{Binding DisplayName}" />
+                                    <StackPanel Spacing="2">
+                                        <TextBlock
+                                            Classes="body"
+                                            FontWeight="SemiBold"
+                                            Text="{Binding DisplayName}" />
                                         <TextBlock
                                             FontSize="11"
-                                            Foreground="Gray"
+                                            Foreground="{DynamicResource SecondaryTextBrush}"
                                             Text="{Binding Description}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-
                     </StackPanel>
 
-                    <!--  Cache buttons  -->
+                    <!--  Cache Buttons  -->
                     <StackPanel
-                        Margin="0,10,0,0"
+                        Margin="0,8,0,0"
                         Orientation="Horizontal"
-                        Spacing="10">
-
+                        Spacing="12">
                         <Button
+                            Classes="secondary"
                             Command="{Binding SearchTab.ClearCacheCommand}"
                             Content="Clear Cache"
-                            Padding="8,2"
+                            Padding="12,6"
                             ToolTip.Tip="Clear all cached results" />
                         <Button
+                            Classes="ghost"
                             Command="{Binding SearchTab.ClearCacheForCurrentTagCommand}"
                             Content="Clear Tag Cache"
                             IsEnabled="{Binding SearchTab.Tag, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                            Padding="8,2"
+                            Padding="12,6"
                             ToolTip.Tip="Clear cache for current tag" />
                     </StackPanel>
 
                     <!--  Search Controls  -->
-                    <Grid ColumnDefinitions="Auto,200,Auto,Auto,Auto,Auto,*" RowDefinitions="Auto,Auto">
-                        <!--  First Row: Search controls  -->
-                        <TextBlock
-                            Grid.Column="0"
-                            Margin="0,0,10,0"
-                            Text="Tag:"
-                            VerticalAlignment="Center" />
-
-                        <TextBox
-                            Grid.Column="1"
-                            Grid.Row="0"
-                            Margin="0,0,10,0"
-                            Text="{Binding SearchTab.Tag}"
-                            Watermark="Enter tag (e.g., avalonia)">
-                            <TextBox.KeyBindings>
-                                <KeyBinding Command="{Binding SearchTab.SearchQuestionsCommand}" Gesture="Enter" />
-                            </TextBox.KeyBindings>
-                        </TextBox>
-
-                        <Button
-                            Command="{Binding SearchTab.SearchQuestionsCommand}"
-                            Content="Search"
-                            Grid.Column="2"
-                            Grid.Row="0"
-                            IsEnabled="{Binding SearchTab.IsLoading, Converter={x:Static BoolConverters.Not}}"
-                            Margin="0,0,10,0" />
-
-                        <Button
-                            Command="{Binding SearchTab.RefreshQuestionsCommand}"
-                            Content="Refresh"
-                            Grid.Column="3"
-                            Grid.Row="0"
-                            IsEnabled="{Binding SearchTab.IsLoading, Converter={x:Static BoolConverters.Not}}"
-                            Margin="0,0,10,0"
-                            ToolTip.Tip="Refresh current page" />
-
-                        <Button
-                            Command="{Binding SearchTab.ClearResultsCommand}"
-                            Content="Clear"
-                            Grid.Column="4"
-                            Grid.Row="0"
-                            IsEnabled="{Binding SearchTab.IsLoading, Converter={x:Static BoolConverters.Not}}"
-                            Margin="0,0,10,0" />
-
-                        <!--  Page size selector  -->
-                        <StackPanel
-                            Grid.Column="5"
-                            Grid.Row="0"
-                            Margin="0,0,10,0"
-                            Orientation="Horizontal"
-                            Spacing="5">
-                            <TextBlock Text="Show:" VerticalAlignment="Center" />
-                            <ComboBox
-                                DisplayMemberBinding="{Binding Display}"
-                                ItemsSource="{Binding SearchTab.PageSizes}"
-                                SelectedItem="{Binding SearchTab.SelectedPageSize}"
-                                Width="80" />
-                        </StackPanel>
-                    </Grid>
-
-                    <!--  Status  -->
                     <Border
-                        Background="DarkGray"
-                        CornerRadius="4"
-                        Margin="0,10,0,0"
-                        Padding="10,8">
-                        <TextBlock
-                            FontStyle="Italic"
-                            Foreground="#6C757D"
-                            Text="{Binding SearchTab.StatusMessage}"
-                            TextWrapping="Wrap" />
+                        Classes="section-card"
+                        Margin="0,12,0,0"
+                        Padding="16">
+                        <StackPanel Spacing="12">
+                            <TextBlock Classes="header-small" Text="Search Questions" />
+
+                            <Grid
+                                ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto"
+                                ColumnSpacing="10"
+                                RowDefinitions="Auto"
+                                RowSpacing="10">
+                                <!--  Tag Input  -->
+                                <TextBlock
+                                    Classes="body"
+                                    Grid.Column="0"
+                                    Text="Tag:"
+                                    VerticalAlignment="Center" />
+
+                                <TextBox
+                                    Classes="search-input"
+                                    Grid.Column="1"
+                                    Text="{Binding SearchTab.Tag}"
+                                    Watermark="Enter tag (e.g., avalonia)">
+                                    <TextBox.KeyBindings>
+                                        <KeyBinding Command="{Binding SearchTab.SearchQuestionsCommand}" Gesture="Enter" />
+                                    </TextBox.KeyBindings>
+                                </TextBox>
+
+                                <!--  Action Buttons  -->
+                                <Button
+                                    Classes="primary"
+                                    Command="{Binding SearchTab.SearchQuestionsCommand}"
+                                    Content="Search"
+                                    Grid.Column="2"
+                                    IsEnabled="{Binding SearchTab.IsLoading, Converter={x:Static BoolConverters.Not}}" />
+
+                                <Button
+                                    Classes="secondary"
+                                    Command="{Binding SearchTab.RefreshQuestionsCommand}"
+                                    Content="Refresh"
+                                    Grid.Column="3"
+                                    IsEnabled="{Binding SearchTab.IsLoading, Converter={x:Static BoolConverters.Not}}"
+                                    ToolTip.Tip="Refresh current page" />
+
+                                <Button
+                                    Classes="ghost"
+                                    Command="{Binding SearchTab.ClearResultsCommand}"
+                                    Content="Clear"
+                                    Grid.Column="4"
+                                    IsEnabled="{Binding SearchTab.IsLoading, Converter={x:Static BoolConverters.Not}}" />
+
+                                <!--  Page Size Selector  -->
+                                <StackPanel
+                                    Grid.Column="5"
+                                    Orientation="Horizontal"
+                                    Spacing="8">
+                                    <TextBlock
+                                        Classes="caption"
+                                        Text="Show:"
+                                        VerticalAlignment="Center" />
+                                    <ComboBox
+                                        Classes="combo-small"
+                                        DisplayMemberBinding="{Binding Display}"
+                                        ItemsSource="{Binding SearchTab.PageSizes}"
+                                        SelectedItem="{Binding SearchTab.SelectedPageSize}"
+                                        Width="80" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Status Bar  -->
+                    <Border Classes="info-card" Margin="0,12,0,0">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock
+                                FontSize="14"
+                                Text="📊"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                Classes="caption"
+                                FontStyle="Italic"
+                                Foreground="{DynamicResource SecondaryTextBrush}"
+                                Text="{Binding SearchTab.StatusMessage}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
                     </Border>
                 </StackPanel>
-
-                <!--  Row 1: Progress Bar  -->
-                <ProgressBar
-                    Grid.Row="1"
-                    Height="4"
-                    IsIndeterminate="{Binding SearchTab.IsLoading}"
-                    IsVisible="{Binding SearchTab.IsLoading}"
-                    Margin="0,0,0,10" />
 
                 <!--  Row 2: Spacer (only visible when progress bar is hidden)  -->
                 <Border
                     Grid.Row="2"
                     Height="0"
                     IsVisible="{Binding SearchTab.IsLoading, Converter={x:Static BoolConverters.Not}}"
-                    Margin="0,0,0,10" />
+                    Margin="0,0,0,16" />
 
                 <!--  Row 3: Main Content (Questions List)  -->
                 <Grid Grid.Row="3">
@@ -196,94 +187,106 @@
                         SelectedItem="{Binding SearchTab.SelectedQuestion}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="models:StackOverflowQuestion">
-                                <Border
-                                    Background="Transparent"
-                                    BorderBrush="#E0E0E0"
-                                    BorderThickness="0,0,0,1"
-                                    Margin="0,2"
-                                    Name="QuestionBorder"
-                                    Padding="15">
-
+                                <Border Classes="question-card">
                                     <Grid>
-                                        <StackPanel Spacing="8">
-                                            <!--  Title with answer status color  -->
+                                        <StackPanel Spacing="12">
+                                            <!--  Title with answer status  -->
                                             <TextBlock
-                                                FontSize="14"
-                                                FontWeight="Bold"
+                                                Classes="header-small"
+                                                FontSize="15"
+                                                FontWeight="SemiBold"
                                                 Foreground="{Binding IsAnswered, Converter={StaticResource BooleanToColorConverter}}"
                                                 Text="{Binding Title}"
                                                 TextWrapping="Wrap" />
 
-                                            <!--  Stats row  -->
-                                            <StackPanel Orientation="Horizontal" Spacing="20">
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock FontWeight="SemiBold" Text="Score:" />
+                                            <!--  Stats Row  -->
+                                            <StackPanel
+                                                Classes="stats-container"
+                                                Orientation="Horizontal"
+                                                Spacing="20">
+                                                <StackPanel
+                                                    Classes="stat-item"
+                                                    Orientation="Horizontal"
+                                                    Spacing="6">
+                                                    <TextBlock Classes="caption" Text="Score:" />
                                                     <TextBlock
-                                                        FontWeight="Bold"
+                                                        Classes="body"
+                                                        FontWeight="SemiBold"
                                                         Foreground="{Binding Score, Converter={StaticResource ScoreToColorConverter}}"
                                                         Text="{Binding Score}" />
                                                 </StackPanel>
 
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock FontWeight="SemiBold" Text="Answers:" />
+                                                <StackPanel
+                                                    Classes="stat-item"
+                                                    Orientation="Horizontal"
+                                                    Spacing="6">
+                                                    <TextBlock Classes="caption" Text="Answers:" />
                                                     <TextBlock
-                                                        FontWeight="Bold"
+                                                        Classes="body"
+                                                        FontWeight="SemiBold"
                                                         Foreground="{Binding AnswerCount, Converter={StaticResource AnswerCountToColorConverter}}"
                                                         Text="{Binding AnswerCount}" />
                                                 </StackPanel>
 
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock FontWeight="SemiBold" Text="Views:" />
-                                                    <TextBlock Text="{Binding FormattedViewCount}" />
+                                                <StackPanel
+                                                    Classes="stat-item"
+                                                    Orientation="Horizontal"
+                                                    Spacing="6">
+                                                    <TextBlock Classes="caption" Text="Views:" />
+                                                    <TextBlock Classes="body" Text="{Binding FormattedViewCount}" />
                                                 </StackPanel>
 
-                                                <!--  Owner information  -->
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock FontWeight="SemiBold" Text="By:" />
-                                                    <TextBlock Foreground="DarkBlue" Text="{Binding OwnerDisplayName}" />
+                                                <!--  Owner Information  -->
+                                                <StackPanel
+                                                    Classes="stat-item"
+                                                    Orientation="Horizontal"
+                                                    Spacing="6">
+                                                    <TextBlock Classes="caption" Text="By:" />
+                                                    <TextBlock
+                                                        Classes="body"
+                                                        Foreground="{DynamicResource AccentTextBrush}"
+                                                        Text="{Binding OwnerDisplayName}" />
                                                 </StackPanel>
                                             </StackPanel>
 
                                             <!--  Tags  -->
-                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <TextBlock
-                                                    FontWeight="SemiBold"
+                                                    Classes="caption"
                                                     Text="Tags:"
                                                     VerticalAlignment="Center" />
                                                 <ItemsControl ItemsSource="{Binding Tags}">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border
-                                                                Background="#E3F2FD"
-                                                                BorderBrush="#1976D2"
-                                                                BorderThickness="1"
-                                                                CornerRadius="4"
-                                                                Margin="0,0,4,0"
-                                                                Padding="6,3">
+                                                            <Border Classes="tag">
                                                                 <TextBlock
+                                                                    Classes="caption"
                                                                     FontSize="11"
-                                                                    Foreground="#1976D2"
+                                                                    FontWeight="SemiBold"
+                                                                    Foreground="{DynamicResource TagTextBrush}"
                                                                     Text="{Binding}" />
                                                             </Border>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
-                                                            <WrapPanel />
+                                                            <WrapPanel ItemSpacing="4" />
                                                         </ItemsPanelTemplate>
                                                     </ItemsControl.ItemsPanel>
                                                 </ItemsControl>
                                             </StackPanel>
 
                                             <!--  Dates  -->
-                                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                            <StackPanel Orientation="Horizontal" Spacing="16">
                                                 <TextBlock
+                                                    Classes="caption"
                                                     FontSize="11"
-                                                    Foreground="#666666"
+                                                    Foreground="{DynamicResource SecondaryTextBrush}"
                                                     Text="{Binding CreationDateTime, StringFormat='Created: {0:MMM dd, yyyy HH:mm}'}" />
                                                 <TextBlock
+                                                    Classes="caption"
                                                     FontSize="11"
-                                                    Foreground="#666666"
+                                                    Foreground="{DynamicResource SecondaryTextBrush}"
                                                     Text="{Binding LastActivityDateTime, StringFormat='Last activity: {0:MMM dd, yyyy HH:mm}'}" />
                                             </StackPanel>
                                         </StackPanel>
@@ -292,31 +295,84 @@
                                         <StackPanel
                                             HorizontalAlignment="Right"
                                             Orientation="Horizontal"
-                                            Spacing="10">
+                                            Spacing="8"
+                                            VerticalAlignment="Top">
                                             <Button
-                                                Background="Transparent"
-                                                BorderBrush="#1976D2"
-                                                BorderThickness="1"
+                                                Classes="secondary"
                                                 Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).SearchTab.OpenQuestionInBrowserCommand}"
                                                 CommandParameter="{Binding}"
                                                 Content="🌐 Open"
-                                                FontSize="11"
-                                                Foreground="#1976D2"
-                                                Padding="8,2" />
+                                                Padding="10,6" />
 
                                             <Button
+                                                Classes="ghost"
                                                 Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).SearchTab.CopyLinkCommand}"
                                                 CommandParameter="{Binding Link}"
-                                                Content="📋 Copy Link"
-                                                FontSize="11"
-                                                Padding="8,2"
+                                                Content="📋 Copy"
+                                                Padding="10,6"
                                                 ToolTip.Tip="Copy question link to clipboard" />
                                         </StackPanel>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
+
+                        <!--  Empty State  -->
+                        <ListBox.Styles>
+                            <Style Selector="ListBox:empty">
+                                <Setter Property="Template">
+                                    <ControlTemplate>
+                                        <Border Classes="section-card" Margin="40">
+                                            <StackPanel
+                                                HorizontalAlignment="Center"
+                                                Spacing="16"
+                                                VerticalAlignment="Center">
+                                                <PathIcon
+                                                    Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"
+                                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                                    Height="64"
+                                                    Width="64" />
+                                                <TextBlock
+                                                    Classes="header-medium"
+                                                    FontSize="16"
+                                                    Foreground="{DynamicResource PrimaryTextBrush}"
+                                                    HorizontalAlignment="Center"
+                                                    Text="No questions found"
+                                                    TextAlignment="Center" />
+                                                <TextBlock
+                                                    Classes="body"
+                                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                                    HorizontalAlignment="Center"
+                                                    MaxWidth="300"
+                                                    Text="Enter a tag and click Search to find StackOverflow questions"
+                                                    TextAlignment="Center"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter>
+                            </Style>
+                        </ListBox.Styles>
                     </ListBox>
+
+                    <!--  Loading State  -->
+                    <Border Background="{DynamicResource BackgroundBrush}" IsVisible="{Binding SearchTab.IsLoading}">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Spacing="16"
+                            VerticalAlignment="Center">
+                            <ProgressBar
+                                Classes="loading-bar"
+                                Height="4"
+                                IsIndeterminate="True"
+                                Width="200" />
+                            <TextBlock
+                                Classes="body"
+                                Foreground="{DynamicResource SecondaryTextBrush}"
+                                HorizontalAlignment="Center"
+                                Text="Searching StackOverflow..." />
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </Grid>
         </TabItem>
@@ -324,8 +380,11 @@
         <!--  Tab 2: Recent Questions  -->
         <TabItem>
             <TabItem.Header>
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock Text="Recent Questions" VerticalAlignment="Center" />
+                <StackPanel Classes="tab-header">
+                    <TextBlock
+                        Classes="body"
+                        Text="Recent Questions"
+                        VerticalAlignment="Center" />
                     <Border Classes="animatedBadge" IsVisible="{Binding RecentQuestionsTab.NotificationViewModel.UnreadCount, Converter={StaticResource GreaterThanConverter}, ConverterParameter='0'}">
                         <TextBlock
                             FontSize="10"
@@ -338,95 +397,173 @@
                 </StackPanel>
             </TabItem.Header>
 
-            <DockPanel Margin="5">
+            <DockPanel Background="{DynamicResource BackgroundBrush}" Margin="16">
+                <!--  Header Section  -->
                 <StackPanel
                     DockPanel.Dock="Top"
-                    Margin="0,0,0,10"
-                    Spacing="5">
-                    <!--  Dropdown Button  -->
-                    <Button
-                        Background="#E3F2FD"
-                        Command="{Binding RecentQuestionsTab.ToggleSubscriptionDropdownCommand}"
-                        Content="➕ Add Subscription"
-                        CornerRadius="4"
-                        FontWeight="SemiBold"
-                        Foreground="#1976D2"
-                        Padding="8,4">
-                        <Button.Styles>
-                            <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                <Setter Property="Background" Value="#1976D2" />
-                                <Setter Property="Foreground" Value="White" />
-                            </Style>
-                        </Button.Styles>
-                    </Button>
+                    Margin="0,0,0,20"
+                    Spacing="16">
+                    <!--  Subscription Management Card  -->
+                    <Border Classes="section-card">
+                        <StackPanel Spacing="16">
+                            <TextBlock Classes="header-small" Text="📬 Subscription Management" />
 
-                    <!--  Dropdown Content  -->
-                    <Border
-                        Background="DimGray"
-                        BorderBrush="#E0E0E0"
-                        BorderThickness="1"
-                        CornerRadius="4"
-                        IsVisible="{Binding RecentQuestionsTab.IsSubscriptionDropdownOpen}"
-                        Padding="10">
-                        <StackPanel Spacing="8">
-                            <TextBlock
-                                FontWeight="SemiBold"
-                                Margin="0,0,0,5"
-                                Text="Subscribe to a tag:" />
+                            <!--  Add Subscription Button  -->
+                            <Button
+                                Classes="primary"
+                                Command="{Binding RecentQuestionsTab.ToggleSubscriptionDropdownCommand}"
+                                Content="➕ Add Subscription"
+                                HorizontalAlignment="Left"
+                                Padding="12,8" />
 
-                            <!--  Tag Input  -->
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <TextBox
-                                    Padding="8,4"
-                                    Text="{Binding RecentQuestionsTab.NewSubscriptionTag}"
-                                    Watermark="Enter tag (e.g avalonia)"
-                                    Width="200">
-                                    <TextBox.KeyBindings>
-                                        <KeyBinding Command="{Binding RecentQuestionsTab.AddSubscriptionCommand}" Gesture="Enter" />
-                                    </TextBox.KeyBindings>
-                                </TextBox>
-                                <Button
-                                    Background="#28A745"
-                                    Command="{Binding RecentQuestionsTab.AddSubscriptionCommand}"
-                                    Content="Subscribe"
-                                    Foreground="White"
-                                    Padding="8,4" />
-                                <Button
-                                    Background="#6C757D"
-                                    Command="{Binding RecentQuestionsTab.CancelSubscriptionCommand}"
-                                    Content="Cancel"
-                                    Foreground="White"
-                                    Padding="8,4" />
-                            </StackPanel>
+                            <!--  Dropdown Content  -->
+                            <Border
+                                Background="{DynamicResource CardBackgroundBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                IsVisible="{Binding RecentQuestionsTab.IsSubscriptionDropdownOpen}"
+                                Padding="16">
+                                <StackPanel Spacing="12">
+                                    <TextBlock
+                                        Classes="body"
+                                        FontWeight="SemiBold"
+                                        Text="Subscribe to a tag:" />
 
-                            <!--  Suggestions  -->
-                            <StackPanel
-                                IsVisible="{Binding RecentQuestionsTab.SubscriptionSuggestions.Count, Converter={StaticResource GreaterThanConverter}, ConverterParameter='0'}"
-                                Orientation="Horizontal"
-                                Spacing="5">
-                                <TextBlock
-                                    FontSize="11"
-                                    Foreground="Gray"
-                                    Text="Suggestions:"
-                                    VerticalAlignment="Center" />
-                                <ItemsControl ItemsSource="{Binding RecentQuestionsTab.SubscriptionSuggestions}">
+                                    <!--  Tag Input  -->
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBox
+                                            Classes="search-input"
+                                            Padding="12,8"
+                                            Text="{Binding RecentQuestionsTab.NewSubscriptionTag}"
+                                            Watermark="Enter tag (e.g., avalonia)"
+                                            Width="240">
+                                            <TextBox.KeyBindings>
+                                                <KeyBinding Command="{Binding RecentQuestionsTab.AddSubscriptionCommand}" Gesture="Enter" />
+                                            </TextBox.KeyBindings>
+                                        </TextBox>
+                                        <Button
+                                            Classes="success"
+                                            Command="{Binding RecentQuestionsTab.AddSubscriptionCommand}"
+                                            Content="Subscribe"
+                                            Padding="12,8" />
+                                        <Button
+                                            Classes="ghost"
+                                            Command="{Binding RecentQuestionsTab.CancelSubscriptionCommand}"
+                                            Content="Cancel"
+                                            Padding="12,8" />
+                                    </StackPanel>
+
+                                    <!--  Suggestions  -->
+                                    <StackPanel IsVisible="{Binding RecentQuestionsTab.SubscriptionSuggestions.Count, Converter={StaticResource GreaterThanConverter}, ConverterParameter='0'}" Spacing="6">
+                                        <TextBlock Classes="caption" Text="Suggestions:" />
+                                        <ItemsControl ItemsSource="{Binding RecentQuestionsTab.SubscriptionSuggestions}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel ItemSpacing="6" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button
+                                                        Classes="ghost"
+                                                        Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).RecentQuestionsTab.UseSuggestionCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Content="{Binding}"
+                                                        Padding="8,4" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!--  Current Subscriptions  -->
+                            <StackPanel Margin="0,8,0,0" Spacing="8">
+                                <TextBlock Classes="body" Text="Active Subscriptions:" />
+                                <ItemsControl ItemsSource="{Binding RecentQuestionsTab.Subscriptions}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <WrapPanel ItemSpacing="5" />
+                                            <WrapPanel ItemSpacing="8" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Classes="tag">
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <TextBlock
+                                                        Classes="caption"
+                                                        Text="{Binding Tag}"
+                                                        VerticalAlignment="Center" />
+                                                    <Button
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Classes="icon"
+                                                        Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).RecentQuestionsTab.UnsubscribeToTagCommand}"
+                                                        CommandParameter="{Binding Tag}"
+                                                        Content="×"
+                                                        FontSize="12"
+                                                        FontWeight="Bold"
+                                                        Foreground="{DynamicResource ErrorBrush}"
+                                                        Padding="4,0"
+                                                        ToolTip.Tip="Unsubscribe from this tag" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!--  No Subscriptions State  -->
+                                <Border
+                                    Background="{DynamicResource SectionBackgroundBrush}"
+                                    CornerRadius="6"
+                                    IsVisible="{Binding RecentQuestionsTab.Subscriptions.Count, Converter={x:Static ObjectConverters.Equal}, ConverterParameter='0'}"
+                                    Padding="12">
+                                    <TextBlock
+                                        Classes="caption"
+                                        Text="No active subscriptions. Add one above to start monitoring."
+                                        TextAlignment="Center" />
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Filter Section  -->
+                    <Border Classes="section-card">
+                        <StackPanel Spacing="12">
+                            <TextBlock Classes="header-small" Text="🔍 Filter Questions" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock
+                                    Classes="body"
+                                    Text="Filter by tag:"
+                                    VerticalAlignment="Center" />
+                                <ItemsControl ItemsSource="{Binding RecentQuestionsTab.FilterTags}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel ItemSpacing="8" />
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Button
-                                                Background="Transparent"
-                                                BorderBrush="#87CEFA"
-                                                BorderThickness="1"
-                                                Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).RecentQuestionsTab.UseSuggestionCommand}"
-                                                CommandParameter="{Binding}"
-                                                Content="{Binding}"
-                                                FontSize="11"
-                                                Foreground="#1E90FF"
-                                                Padding="6,2" />
+                                                Background="{Binding IsSelected, Converter={StaticResource BooleanToTagBackgroundConverter}}"
+                                                Classes="filter-tag"
+                                                Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).RecentQuestionsTab.FilterByTagCommand}"
+                                                CommandParameter="{Binding Tag}"
+                                                Content="{Binding Tag}"
+                                                CornerRadius="16"
+                                                FontWeight="SemiBold"
+                                                Foreground="{Binding IsSelected, Converter={StaticResource BooleanToTagForegroundConverter}}"
+                                                Padding="12,6"
+                                                ToolTip.Tip="Click to filter by this tag">
+                                                <Button.Styles>
+                                                    <Style Selector="Button.filter-tag:pointerover /template/ ContentPresenter">
+                                                        <Setter Property="Background" Value="{DynamicResource HoverBackgroundBrush}" />
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentTextBrush}" />
+                                                    </Style>
+                                                </Button.Styles>
+                                            </Button>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
@@ -434,102 +571,28 @@
                         </StackPanel>
                     </Border>
 
-                    <!--  Current Subscriptions  -->
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <TextBlock
-                            FontWeight="SemiBold"
-                            Text="Current Subscriptions:"
-                            VerticalAlignment="Center" />
-                        <ItemsControl ItemsSource="{Binding RecentQuestionsTab.Subscriptions}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel ItemSpacing="5" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border
-                                        Background="#E3F2FD"
-                                        CornerRadius="12"
-                                        Padding="8,4">
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <TextBlock
-                                                FontWeight="SemiBold"
-                                                Foreground="#1976D2"
-                                                Text="{Binding Tag}"
-                                                VerticalAlignment="Center" />
-                                            <Button
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).RecentQuestionsTab.UnsubscribeToTagCommand}"
-                                                CommandParameter="{Binding Tag}"
-                                                Content="×"
-                                                FontSize="12"
-                                                FontWeight="Bold"
-                                                Foreground="Red"
-                                                Padding="4,0"
-                                                ToolTip.Tip="Unsubscribe from this tag" />
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                    </StackPanel>
-
-                    <!--  Active Subscriptions with Remove Buttons  -->
-                    <StackPanel
-                        Margin="0,0,0,10"
-                        Orientation="Horizontal"
-                        Spacing="5">
-                        <TextBlock
-                            FontWeight="SemiBold"
-                            Text="Filter by tag:"
-                            VerticalAlignment="Center" />
-                        <ItemsControl ItemsSource="{Binding RecentQuestionsTab.FilterTags}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel ItemSpacing="5" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button
-                                        Background="{Binding IsSelected, Converter={StaticResource BooleanToTagBackgroundConverter}}"
-                                        Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).RecentQuestionsTab.FilterByTagCommand}"
-                                        CommandParameter="{Binding Tag}"
-                                        Content="{Binding Tag}"
-                                        CornerRadius="12"
-                                        FontWeight="SemiBold"
-                                        Foreground="{Binding IsSelected, Converter={StaticResource BooleanToTagForegroundConverter}}"
-                                        Padding="8,4"
-                                        ToolTip.Tip="Click to filter by this tag">
-                                        <Button.Styles>
-                                            <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                                <Setter Property="Background" Value="#1976D2" />
-                                                <Setter Property="Foreground" Value="White" />
-                                            </Style>
-                                        </Button.Styles>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-
                     <!--  Action Buttons  -->
-                    <StackPanel Orientation="Horizontal" Spacing="5">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Button
+                            Classes="secondary"
+                            Command="{Binding RecentQuestionsTab.MarkAllNotificationsAsReadCommand}"
+                            Content="📝 Mark All as Read"
+                            Padding="12,8"
+                            ToolTip.Tip="Mark all questions as read" />
 
                         <Button
-                            Command="{Binding RecentQuestionsTab.MarkAllNotificationsAsReadCommand}"
-                            Content="Mark as read"
-                            Padding="8,2"
-                            ToolTip.Tip="Mark questions as read" />
-                        <!-- <Button Command="{Binding $parent[Control].((vm:RecentQuestionsViewModel)DataContext).TestNotificationCommand}" Content="test notification popup" /> -->
-                        <Button
+                            Classes="ghost"
                             Command="{Binding RecentQuestionsTab.ClearRecentQuestionsCommand}"
-                            Content="Clear Questions"
-                            Padding="8,2"
+                            Content="🗑️ Clear Questions"
+                            Padding="12,8"
                             ToolTip.Tip="Clear all recent questions" />
+
+                        <Button
+                            Classes="ghost"
+                            Command="{Binding RecentQuestionsTab.TestNotificationCommand}"
+                            Content="🔔 Test Notification"
+                            Padding="12,8"
+                            ToolTip.Tip="Test notification system" />
                     </StackPanel>
                 </StackPanel>
 
@@ -538,84 +601,98 @@
 
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="models:StackOverflowQuestion">
-                            <Border
-                                Background="Transparent"
-                                BorderBrush="#E0E0E0"
-                                BorderThickness="0,0,0,1"
-                                Margin="0,2"
-                                Padding="15">
-                                <StackPanel Spacing="8">
+                            <Border Classes="question-card">
+                                <StackPanel Spacing="12">
                                     <!--  Question Title  -->
                                     <TextBlock
+                                        Classes="header-small"
                                         Cursor="Hand"
-                                        FontSize="14"
-                                        FontWeight="Bold"
-                                        Foreground="#1976D2"
+                                        FontSize="15"
+                                        FontWeight="SemiBold"
+                                        Foreground="{DynamicResource AccentTextBrush}"
                                         Text="{Binding Title}"
                                         TextWrapping="Wrap">
                                         <TextBlock.ContextMenu>
-                                            <ContextMenu>
+                                            <ContextMenu Background="{DynamicResource CardBackgroundBrush}">
                                                 <MenuItem
+                                                    Classes="context-item"
                                                     Command="{Binding $parent[ListBox].((vm:RecentQuestionsViewModel)DataContext).OpenQuestionInBrowserCommand}"
                                                     CommandParameter="{Binding}"
-                                                    Header="Open in Browser" />
+                                                    Header="🌐 Open in Browser" />
                                                 <MenuItem
+                                                    Classes="context-item"
                                                     Command="{Binding $parent[ListBox].((vm:RecentQuestionsViewModel)DataContext).CopyLinkCommand}"
                                                     CommandParameter="{Binding Link}"
-                                                    Header="Copy Link" />
+                                                    Header="📋 Copy Link" />
                                             </ContextMenu>
                                         </TextBlock.ContextMenu>
                                     </TextBlock>
 
                                     <!--  Question Stats  -->
-                                    <StackPanel Orientation="Horizontal" Spacing="15">
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <TextBlock FontWeight="SemiBold" Text="Score:" />
+                                    <StackPanel
+                                        Classes="stats-container"
+                                        Orientation="Horizontal"
+                                        Spacing="20">
+                                        <StackPanel
+                                            Classes="stat-item"
+                                            Orientation="Horizontal"
+                                            Spacing="6">
+                                            <TextBlock Classes="caption" Text="Score:" />
                                             <TextBlock
-                                                FontWeight="Bold"
+                                                Classes="body"
+                                                FontWeight="SemiBold"
                                                 Foreground="{Binding Score, Converter={StaticResource ScoreToColorConverter}}"
                                                 Text="{Binding Score}" />
                                         </StackPanel>
 
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <TextBlock FontWeight="SemiBold" Text="Answers:" />
+                                        <StackPanel
+                                            Classes="stat-item"
+                                            Orientation="Horizontal"
+                                            Spacing="6">
+                                            <TextBlock Classes="caption" Text="Answers:" />
                                             <TextBlock
-                                                FontWeight="Bold"
+                                                Classes="body"
+                                                FontWeight="SemiBold"
                                                 Foreground="{Binding AnswerCount, Converter={StaticResource AnswerCountToColorConverter}}"
                                                 Text="{Binding AnswerCount}" />
                                         </StackPanel>
 
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <TextBlock FontWeight="SemiBold" Text="Views:" />
-                                            <TextBlock Text="{Binding ViewCount}" />
+                                        <StackPanel
+                                            Classes="stat-item"
+                                            Orientation="Horizontal"
+                                            Spacing="6">
+                                            <TextBlock Classes="caption" Text="Views:" />
+                                            <TextBlock Classes="body" Text="{Binding ViewCount}" />
                                         </StackPanel>
 
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <TextBlock FontWeight="SemiBold" Text="Status:" />
-                                            <TextBlock Foreground="{Binding IsAnswered, Converter={StaticResource BooleanToColorConverter}}" Text="{Binding IsAnswered, Converter={StaticResource BooleanToAnsweredTextConverter}}" />
+                                        <StackPanel
+                                            Classes="stat-item"
+                                            Orientation="Horizontal"
+                                            Spacing="6">
+                                            <TextBlock Classes="caption" Text="Status:" />
+                                            <TextBlock
+                                                Classes="body"
+                                                Foreground="{Binding IsAnswered, Converter={StaticResource BooleanToColorConverter}}"
+                                                Text="{Binding IsAnswered, Converter={StaticResource BooleanToAnsweredTextConverter}}" />
                                         </StackPanel>
                                     </StackPanel>
 
                                     <!--  Tags and Time  -->
-                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
                                         <ItemsControl ItemsSource="{Binding Tags}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel ItemSpacing="5" />
+                                                    <WrapPanel ItemSpacing="6" />
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Border
-                                                        Background="#F0F8FF"
-                                                        BorderBrush="#87CEFA"
-                                                        BorderThickness="1"
-                                                        CornerRadius="10"
-                                                        Padding="6,3">
+                                                    <Border Classes="tag">
                                                         <TextBlock
+                                                            Classes="caption"
                                                             FontSize="11"
                                                             FontWeight="SemiBold"
-                                                            Foreground="#1E90FF"
+                                                            Foreground="{DynamicResource TagTextBrush}"
                                                             Text="{Binding}" />
                                                     </Border>
                                                 </DataTemplate>
@@ -623,9 +700,10 @@
                                         </ItemsControl>
 
                                         <TextBlock
+                                            Classes="caption"
                                             FontSize="11"
                                             FontStyle="Italic"
-                                            Foreground="Gray"
+                                            Foreground="{DynamicResource SecondaryTextBrush}"
                                             Text="{Binding CreationDateTime, StringFormat='{}{0:MMM dd, yyyy HH:mm}'}" />
                                     </StackPanel>
 
@@ -633,24 +711,20 @@
                                     <StackPanel
                                         HorizontalAlignment="Right"
                                         Orientation="Horizontal"
-                                        Spacing="10">
+                                        Spacing="8">
                                         <Button
-                                            Background="Transparent"
-                                            BorderBrush="#1976D2"
-                                            BorderThickness="1"
+                                            Classes="secondary"
                                             Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).RecentQuestionsTab.OpenQuestionInBrowserCommand}"
                                             CommandParameter="{Binding}"
                                             Content="🌐 Open"
-                                            FontSize="11"
-                                            Foreground="#1976D2"
-                                            Padding="8,2" />
+                                            Padding="10,6" />
 
                                         <Button
+                                            Classes="ghost"
                                             Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).RecentQuestionsTab.CopyLinkCommand}"
                                             CommandParameter="{Binding Link}"
-                                            Content="📋 Copy Link"
-                                            FontSize="11"
-                                            Padding="8,2"
+                                            Content="📋 Copy"
+                                            Padding="10,6"
                                             ToolTip.Tip="Copy question link to clipboard" />
                                     </StackPanel>
                                 </StackPanel>
@@ -663,30 +737,39 @@
                         <Style Selector="ListBox:empty">
                             <Setter Property="Template">
                                 <ControlTemplate>
-                                    <StackPanel
-                                        HorizontalAlignment="Center"
-                                        Margin="40"
-                                        Spacing="15"
-                                        VerticalAlignment="Center">
-                                        <PathIcon
-                                            Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"
-                                            Foreground="LightGray"
-                                            Height="48"
-                                            Width="48" />
-                                        <TextBlock
-                                            FontSize="16"
-                                            Foreground="Gray"
+                                    <Border Classes="section-card" Margin="40">
+                                        <StackPanel
                                             HorizontalAlignment="Center"
-                                            Text="No recent questions yet"
-                                            TextAlignment="Center" />
-                                        <TextBlock
-                                            Foreground="Gray"
-                                            HorizontalAlignment="Center"
-                                            MaxWidth="300"
-                                            Text="Questions will appear here when you receive notifications"
-                                            TextAlignment="Center"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
+                                            Spacing="16"
+                                            VerticalAlignment="Center">
+                                            <PathIcon
+                                                Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"
+                                                Foreground="{DynamicResource SecondaryTextBrush}"
+                                                Height="64"
+                                                Width="64" />
+                                            <TextBlock
+                                                Classes="header-medium"
+                                                FontSize="16"
+                                                Foreground="{DynamicResource PrimaryTextBrush}"
+                                                HorizontalAlignment="Center"
+                                                Text="No recent questions yet"
+                                                TextAlignment="Center" />
+                                            <TextBlock
+                                                Classes="body"
+                                                Foreground="{DynamicResource SecondaryTextBrush}"
+                                                HorizontalAlignment="Center"
+                                                MaxWidth="300"
+                                                Text="Questions will appear here when you receive notifications from your subscriptions"
+                                                TextAlignment="Center"
+                                                TextWrapping="Wrap" />
+                                            <Button
+                                                Classes="primary"
+                                                Command="{Binding RecentQuestionsTab.ToggleSubscriptionDropdownCommand}"
+                                                Content="➕ Add Your First Subscription"
+                                                HorizontalAlignment="Center"
+                                                Padding="16,10" />
+                                        </StackPanel>
+                                    </Border>
                                 </ControlTemplate>
                             </Setter>
                         </Style>
@@ -697,331 +780,357 @@
 
         <!--  Tab 3: Settings  -->
         <TabItem Header="Settings">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Background="{DynamicResource BackgroundBrush}" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="20" Spacing="20">
 
                     <!--  Notification Settings Section  -->
-                    <Border
-                        Background="DarkGray"
-                        CornerRadius="8"
-                        Padding="15">
-                        <StackPanel Spacing="12">
-                            <TextBlock
-                                FontSize="16"
-                                FontWeight="Bold"
-                                Text="Notification Settings" />
+                    <Border Classes="section-card">
+                        <StackPanel Spacing="16">
+                            <TextBlock Classes="header-medium" Text="🔔 Notification Settings" />
 
                             <!--  Pop-up Notifications  -->
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
                                 <ToggleButton
-                                    Height="25"
+                                    Classes="notification-toggle"
+                                    Height="28"
                                     IsChecked="{Binding SettingsTab.EnablePopupNotification}"
-                                    Width="50">
+                                    Width="52">
                                     <ToggleButton.Styles>
-                                        <Style Selector="ToggleButton:checked">
-                                            <Setter Property="Background" Value="#4CAF50" />
+                                        <Style Selector="ToggleButton.notification-toggle:checked">
+                                            <Setter Property="Background" Value="{DynamicResource OnlineBrush}" />
                                         </Style>
-                                        <Style Selector="ToggleButton:not(:checked)">
-                                            <Setter Property="Background" Value="#CCCCCC" />
+                                        <Style Selector="ToggleButton.notification-toggle:not(:checked)">
+                                            <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
                                         </Style>
                                     </ToggleButton.Styles>
                                 </ToggleButton>
-                                <StackPanel>
-                                    <TextBlock FontWeight="SemiBold" Text="Pop-up Notifications" />
+                                <StackPanel VerticalAlignment="Center">
                                     <TextBlock
-                                        FontSize="11"
-                                        Foreground="Gray"
-                                        Text="Show desktop notifications for new questions" />
+                                        Classes="body"
+                                        FontWeight="SemiBold"
+                                        Text="Pop-up Notifications" />
+                                    <TextBlock Classes="caption" Text="Show desktop notifications for new questions" />
                                 </StackPanel>
                                 <TextBlock
-                                    Margin="10,0,0,0"
+                                    Classes="caption"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    Margin="12,0,0,0"
                                     Text="{Binding SettingsTab.NotificationPopupState}"
                                     VerticalAlignment="Center" />
                             </StackPanel>
 
                             <!--  Notification Sound  -->
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
                                 <ToggleButton
-                                    Height="25"
+                                    Classes="sound-toggle"
+                                    Height="28"
                                     IsChecked="{Binding SettingsTab.EnableNotificationSound}"
-                                    Width="50">
+                                    Width="52">
                                     <ToggleButton.Styles>
-                                        <Style Selector="ToggleButton:checked">
-                                            <Setter Property="Background" Value="#4CAF50" />
+                                        <Style Selector="ToggleButton.sound-toggle:checked">
+                                            <Setter Property="Background" Value="{DynamicResource OnlineBrush}" />
                                         </Style>
-                                        <Style Selector="ToggleButton:not(:checked)">
-                                            <Setter Property="Background" Value="#CCCCCC" />
+                                        <Style Selector="ToggleButton.sound-toggle:not(:checked)">
+                                            <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
                                         </Style>
                                     </ToggleButton.Styles>
                                 </ToggleButton>
-                                <StackPanel>
-                                    <TextBlock FontWeight="SemiBold" Text="Notification Sound" />
+                                <StackPanel VerticalAlignment="Center">
                                     <TextBlock
-                                        FontSize="11"
-                                        Foreground="Gray"
-                                        Text="Play sound with notifications" />
+                                        Classes="body"
+                                        FontWeight="SemiBold"
+                                        Text="Notification Sound" />
+                                    <TextBlock Classes="caption" Text="Play sound with notifications" />
                                 </StackPanel>
                                 <TextBlock
-                                    Margin="10,0,0,0"
+                                    Classes="body"
+                                    FontSize="16"
+                                    Margin="12,0,0,0"
                                     Text="{Binding SettingsTab.SoundIcon}"
                                     VerticalAlignment="Center" />
                                 <Button
+                                    Classes="ghost"
                                     Command="{Binding SettingsTab.TestSoundCommand}"
                                     Content="Test Sound"
                                     IsEnabled="{Binding SettingsTab.EnableNotificationSound}"
-                                    Margin="10,0,0,0"
-                                    Padding="8,4" />
+                                    Margin="12,0,0,0"
+                                    Padding="10,6" />
                             </StackPanel>
 
                             <!--  Notification Duration  -->
-                            <StackPanel Spacing="5">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock FontWeight="SemiBold" Text="Notification Duration" />
-                                    <TextBlock Text="{Binding SettingsTab.NotificationDuration, StringFormat='{}{0} seconds'}" />
+                            <StackPanel Spacing="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock
+                                        Classes="body"
+                                        FontWeight="SemiBold"
+                                        Text="Notification Duration" />
+                                    <TextBlock
+                                        Classes="caption"
+                                        Foreground="{DynamicResource AccentTextBrush}"
+                                        Text="{Binding SettingsTab.NotificationDuration, StringFormat='{}{0} seconds'}" />
                                 </StackPanel>
-                                <TextBlock
-                                    FontSize="11"
-                                    Foreground="Gray"
-                                    Text="How long notifications stay visible" />
+                                <TextBlock Classes="caption" Text="How long notifications stay visible" />
                                 <Slider
-                                    Margin="0,5,0,0"
+                                    Classes="settings-slider"
                                     Maximum="30"
                                     Minimum="2"
                                     TickFrequency="1"
                                     TickPlacement="BottomRight"
                                     Value="{Binding SettingsTab.NotificationDuration}" />
+                                <TextBlock
+                                    Classes="caption"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    HorizontalAlignment="Right"
+                                    Text="Range: 2-30 seconds" />
                             </StackPanel>
 
                             <!--  Test Notification Button  -->
                             <Button
-                                Background="#2196F3"
+                                Classes="primary"
                                 Command="{Binding SettingsTab.TestNotificationCommand}"
-                                Content="Test Notification"
-                                Foreground="White"
+                                Content="🔔 Test Notification"
                                 HorizontalAlignment="Left"
-                                Margin="0,10,0,0"
-                                Padding="10,6" />
+                                Margin="0,8,0,0"
+                                Padding="14,10" />
                         </StackPanel>
                     </Border>
 
                     <!--  Monitoring Settings Section  -->
-                    <Border
-                        Background="DarkGray"
-                        CornerRadius="8"
-                        Padding="15">
-                        <StackPanel Spacing="12">
-                            <TextBlock
-                                FontSize="16"
-                                FontWeight="Bold"
-                                Text="Monitoring Settings" />
+                    <Border Classes="section-card">
+                        <StackPanel Spacing="16">
+                            <TextBlock Classes="header-medium" Text="📡 Monitoring Settings" />
 
                             <!--  Monitoring Status  -->
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                <TextBlock
-                                    FontSize="16"
-                                    Text="{Binding SettingsTab.MonitoringIcon}"
-                                    VerticalAlignment="Center" />
-                                <TextBlock
-                                    FontWeight="SemiBold"
-                                    Text="{Binding SettingsTab.MonitoringStatus}"
-                                    VerticalAlignment="Center" />
-                            </StackPanel>
+                            <Border Background="{Binding SettingsTab.IsMonitoring, Converter={StaticResource BooleanToMonitoringBackgroundConverter}}" Classes="status-card">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <TextBlock
+                                        FontSize="20"
+                                        Text="{Binding SettingsTab.MonitoringIcon}"
+                                        VerticalAlignment="Center" />
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock
+                                            Classes="body"
+                                            FontWeight="SemiBold"
+                                            Text="{Binding SettingsTab.MonitoringStatus}" />
+                                        <TextBlock Classes="caption" Text="{Binding SettingsTab.IsMonitoring, Converter={StaticResource BooleanToMonitoringDescriptionConverter}}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
 
                             <!--  Monitoring Toggle  -->
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
                                 <ToggleButton
+                                    Classes="monitoring-toggle"
                                     Command="{Binding SettingsTab.ToggleMonitoringCommand}"
-                                    Height="25"
-                                    Width="50">
+                                    Height="28"
+                                    Width="52">
                                     <ToggleButton.Styles>
-                                        <Style Selector="ToggleButton:checked /template/ ContentPresenter">
-                                            <Setter Property="Background" Value="#4CAF50" />
+                                        <Style Selector="ToggleButton.monitoring-toggle:checked">
+                                            <Setter Property="Background" Value="{DynamicResource OnlineBrush}" />
                                         </Style>
-                                        <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
-                                            <Setter Property="Background" Value="#CCCCCC" />
+                                        <Style Selector="ToggleButton.monitoring-toggle:not(:checked)">
+                                            <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
                                         </Style>
                                     </ToggleButton.Styles>
                                 </ToggleButton>
-
-                                <StackPanel>
-                                    <TextBlock FontWeight="SemiBold" Text="Real-time Monitoring" />
+                                <StackPanel VerticalAlignment="Center">
                                     <TextBlock
-                                        FontSize="11"
-                                        Foreground="Gray"
-                                        Text="Continuously monitor for new questions" />
+                                        Classes="body"
+                                        FontWeight="SemiBold"
+                                        Text="Real-time Monitoring" />
+                                    <TextBlock Classes="caption" Text="Continuously monitor for new questions" />
                                 </StackPanel>
-                                <!--  <Button  -->
-                                <!--  Background="{Binding SettingsTab.IsMonitoring, Converter={StaticResource BooleanToActiveColorConverter}}"  -->
-                                <!--  Command="{Binding SettingsTab.ToggleMonitoringCommand}"  -->
-                                <!--  Content="{Binding SettingsTab.IsMonitoring, Converter={x:Static BoolConverters.Not}, ConverterParameter='Start Monitoring:Stop Monitoring'}"  -->
-                                <!--  Foreground="White"  -->
-                                <!--  Margin="10,0,0,0"  -->
-                                <!--  Padding="10,6" />  -->
+                                <Button
+                                    Background="{Binding SettingsTab.IsMonitoring, Converter={StaticResource BooleanToMonitoringButtonColorConverter}}"
+                                    Classes="monitoring-action"
+                                    Command="{Binding SettingsTab.ToggleMonitoringCommand}"
+                                    Content="{Binding SettingsTab.IsMonitoring, Converter={x:Static BoolConverters.Not}, ConverterParameter='Start Monitoring:Stop Monitoring'}"
+                                    Foreground="White"
+                                    Margin="12,0,0,0"
+                                    Padding="12,8" />
                             </StackPanel>
 
                             <!--  Auto-start Monitoring  -->
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                <CheckBox IsChecked="{Binding SettingsTab.AutoStartMonitoring}" />
-                                <StackPanel>
-                                    <TextBlock FontWeight="SemiBold" Text="Auto-start Monitoring" />
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <CheckBox Classes="settings-checkbox" IsChecked="{Binding SettingsTab.AutoStartMonitoring}" />
+                                <StackPanel VerticalAlignment="Center">
                                     <TextBlock
-                                        FontSize="11"
-                                        Foreground="Gray"
-                                        Text="Start monitoring automatically when application launches" />
+                                        Classes="body"
+                                        FontWeight="SemiBold"
+                                        Text="Auto-start Monitoring" />
+                                    <TextBlock Classes="caption" Text="Start monitoring automatically when application launches" />
                                 </StackPanel>
+                            </StackPanel>
+
+                            <!--  Monitoring Interval  -->
+                            <StackPanel Margin="0,8,0,0" Spacing="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock
+                                        Classes="body"
+                                        FontWeight="SemiBold"
+                                        Text="Monitoring Interval" />
+                                    <TextBlock
+                                        Classes="caption"
+                                        Foreground="{DynamicResource AccentTextBrush}"
+                                        Text="{Binding SettingsTab.MonitoringInterval, StringFormat='{}{0} minutes'}" />
+                                </StackPanel>
+                                <TextBlock Classes="caption" Text="How often to check for new questions" />
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Slider
+                                        Classes="settings-slider"
+                                        Maximum="60"
+                                        Minimum="1"
+                                        TickFrequency="1"
+                                        TickPlacement="BottomRight"
+                                        Value="{Binding SettingsTab.MonitoringInterval}" />
+                                    <StackPanel Spacing="4">
+                                        <Button
+                                            Classes="icon"
+                                            Command="{Binding SettingsTab.IncreaseMonitoringIntervalCommand}"
+                                            Content="+"
+                                            Height="28"
+                                            Width="36" />
+                                        <Button
+                                            Classes="icon"
+                                            Command="{Binding SettingsTab.DecreaseMonitoringIntervalCommand}"
+                                            Content="-"
+                                            Height="28"
+                                            Width="36" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <TextBlock
+                                    Classes="caption"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    HorizontalAlignment="Right"
+                                    Text="Range: 1-60 minutes" />
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
-                    <!--  Monitoring Interval Setting  -->
-                    <StackPanel Spacing="5">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock FontWeight="SemiBold" Text="Monitoring Interval" />
-                            <TextBlock Text="{Binding SettingsTab.MonitoringInterval, StringFormat='{}{0} minutes'}" />
-                        </StackPanel>
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="Gray"
-                            Text="How often to check for new questions" />
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Slider
-                                Maximum="60"
-                                Minimum="1"
-                                TickFrequency="1"
-                                TickPlacement="BottomRight"
-                                Value="{Binding SettingsTab.MonitoringInterval}"
-                                Width="200" />
-                            <StackPanel>
-                                <Button
-                                    Command="{Binding SettingsTab.IncreaseMonitoringIntervalCommand}"
-                                    Content="+"
-                                    Height="25"
-                                    Margin="2"
-                                    Width="30" />
-                                <Button
-                                    Command="{Binding SettingsTab.DecreaseMonitoringIntervalCommand}"
-                                    Content="-"
-                                    Height="25"
-                                    Margin="2"
-                                    Width="30" />
-                            </StackPanel>
-                        </StackPanel>
-                        <TextBlock
-                            FontSize="10"
-                            Foreground="Gray"
-                            Text="Range: 1-60 minutes" />
-                    </StackPanel>
-
                     <!--  Data Management Section  -->
-                    <Border
-                        Background="DarkGray"
-                        CornerRadius="8"
-                        Padding="15">
-                        <StackPanel Spacing="12">
-                            <TextBlock
-                                FontSize="16"
-                                FontWeight="Bold"
-                                Text="Data Management" />
+                    <Border Classes="section-card">
+                        <StackPanel Spacing="16">
+                            <TextBlock Classes="header-medium" Text="💾 Data Management" />
 
                             <!--  Maximum Recent Questions  -->
-                            <StackPanel Spacing="5">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock FontWeight="SemiBold" Text="Maximum Recent Questions" />
-                                    <TextBlock Text="{Binding SettingsTab.MaxRecentQuestions}" />
+                            <StackPanel Spacing="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock
+                                        Classes="body"
+                                        FontWeight="SemiBold"
+                                        Text="Maximum Recent Questions" />
+                                    <TextBlock
+                                        Classes="caption"
+                                        Foreground="{DynamicResource AccentTextBrush}"
+                                        Text="{Binding SettingsTab.MaxRecentQuestions}" />
                                 </StackPanel>
-                                <TextBlock
-                                    FontSize="11"
-                                    Foreground="Gray"
-                                    Text="Maximum number of recent questions to keep in memory" />
+                                <TextBlock Classes="caption" Text="Maximum number of recent questions to keep in memory" />
                                 <Slider
-                                    Margin="0,5,0,0"
+                                    Classes="settings-slider"
                                     Maximum="200"
                                     Minimum="10"
                                     TickFrequency="10"
                                     TickPlacement="BottomRight"
                                     Value="{Binding SettingsTab.MaxRecentQuestions}" />
+                                <TextBlock
+                                    Classes="caption"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    HorizontalAlignment="Right"
+                                    Text="Range: 10-200 questions" />
                             </StackPanel>
 
                             <!--  Cache Expiration  -->
-                            <StackPanel Spacing="5">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock FontWeight="SemiBold" Text="Cache Expiration" />
-                                    <TextBlock Text="{Binding SettingsTab.CacheExpirationHours, StringFormat='{}{0} hours'}" />
+                            <StackPanel Spacing="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock
+                                        Classes="body"
+                                        FontWeight="SemiBold"
+                                        Text="Cache Expiration" />
+                                    <TextBlock
+                                        Classes="caption"
+                                        Foreground="{DynamicResource AccentTextBrush}"
+                                        Text="{Binding SettingsTab.CacheExpirationHours, StringFormat='{}{0} hours'}" />
                                 </StackPanel>
-                                <TextBlock
-                                    FontSize="11"
-                                    Foreground="Gray"
-                                    Text="How long to keep cached data before refreshing" />
+                                <TextBlock Classes="caption" Text="How long to keep cached data before refreshing" />
                                 <Slider
-                                    Margin="0,5,0,0"
+                                    Classes="settings-slider"
                                     Maximum="168"
                                     Minimum="1"
                                     TickFrequency="24"
                                     TickPlacement="BottomRight"
                                     Value="{Binding SettingsTab.CacheExpirationHours}" />
+                                <TextBlock
+                                    Classes="caption"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    HorizontalAlignment="Right"
+                                    Text="Range: 1-168 hours (1 week)" />
                             </StackPanel>
 
                             <!--  Cache Statistics  -->
-                            <Border
-                                Background="White"
-                                CornerRadius="4"
-                                Margin="0,10,0,0"
-                                Padding="10">
-                                <StackPanel>
+                            <Border Classes="info-card" Margin="0,12,0,0">
+                                <StackPanel Spacing="8">
                                     <TextBlock
+                                        Classes="body"
                                         FontWeight="SemiBold"
-                                        Margin="0,0,0,5"
-                                        Text="Cache Statistics" />
+                                        Text="📊 Cache Statistics" />
                                     <Grid
                                         ColumnDefinitions="Auto,*,Auto,*"
                                         Margin="0,2"
                                         RowDefinitions="Auto,Auto">
                                         <TextBlock
+                                            Classes="caption"
                                             Grid.Column="0"
                                             Grid.Row="0"
                                             Text="Total Requests:" />
                                         <TextBlock
+                                            Classes="body"
                                             FontWeight="SemiBold"
                                             Grid.Column="1"
                                             Grid.Row="0"
-                                            Margin="10,0,0,0"
+                                            Margin="8,0,0,0"
                                             Text="{Binding SettingsTab.TotalCacheRequests}" />
 
                                         <TextBlock
+                                            Classes="caption"
                                             Grid.Column="2"
                                             Grid.Row="0"
-                                            Margin="20,0,0,0"
+                                            Margin="16,0,0,0"
                                             Text="Cache Hits:" />
                                         <TextBlock
+                                            Classes="body"
                                             FontWeight="SemiBold"
-                                            Foreground="#4CAF50"
+                                            Foreground="{DynamicResource SuccessBrush}"
                                             Grid.Column="3"
                                             Grid.Row="0"
-                                            Margin="10,0,0,0"
+                                            Margin="8,0,0,0"
                                             Text="{Binding SettingsTab.CacheHits}" />
 
                                         <TextBlock
+                                            Classes="caption"
                                             Grid.Column="0"
                                             Grid.Row="1"
                                             Text="Cache Misses:" />
                                         <TextBlock
+                                            Classes="body"
                                             FontWeight="SemiBold"
-                                            Foreground="#F44336"
+                                            Foreground="{DynamicResource ErrorBrush}"
                                             Grid.Column="1"
                                             Grid.Row="1"
-                                            Margin="10,0,0,0"
+                                            Margin="8,0,0,0"
                                             Text="{Binding SettingsTab.CacheMisses}" />
 
                                         <TextBlock
+                                            Classes="caption"
                                             Grid.Column="2"
                                             Grid.Row="1"
-                                            Margin="20,0,0,0"
+                                            Margin="16,0,0,0"
                                             Text="Status:" />
                                         <TextBlock
+                                            Classes="body"
                                             FontWeight="SemiBold"
                                             Grid.Column="3"
                                             Grid.Row="1"
-                                            Margin="10,0,0,0"
+                                            Margin="8,0,0,0"
                                             Text="{Binding SettingsTab.CacheStatus}" />
                                     </Grid>
                                 </StackPanel>
@@ -1029,44 +1138,133 @@
 
                             <!--  Cache Actions  -->
                             <StackPanel
-                                Margin="0,10,0,0"
+                                Margin="0,12,0,0"
                                 Orientation="Horizontal"
-                                Spacing="10">
+                                Spacing="12">
                                 <Button
-                                    Background="#FF9800"
+                                    Classes="danger"
                                     Command="{Binding SettingsTab.ClearCacheCommand}"
-                                    Content="Clear Cache"
-                                    Foreground="White"
-                                    Padding="10,6" />
+                                    Content="🗑️ Clear Cache"
+                                    Padding="12,8" />
+                                <TextBlock
+                                    Classes="caption"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    Text="Clear all cached data and force fresh API calls"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Subscriptions Management Section  -->
+                    <Border Classes="section-card">
+                        <StackPanel Spacing="16">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Classes="header-medium" Text="📋 Tag Subscriptions" />
+                                <TextBlock
+                                    Classes="caption"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    Text="{Binding SettingsTab.Subscriptions.Count, StringFormat='({0} active)}'}"
+                                    VerticalAlignment="Bottom" />
+                            </StackPanel>
+
+                            <!--  Active Subscriptions  -->
+                            <StackPanel Spacing="8">
+                                <TextBlock
+                                    Classes="body"
+                                    FontWeight="SemiBold"
+                                    Text="Active Subscriptions:" />
+
+                                <ItemsControl ItemsSource="{Binding SettingsTab.Subscriptions}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel ItemSpacing="8" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Classes="tag">
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <TextBlock
+                                                        Classes="caption"
+                                                        Text="{Binding Tag}"
+                                                        VerticalAlignment="Center" />
+                                                    <Button
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Classes="icon"
+                                                        Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).SettingsTab.UnsubscribeFromTagCommand}"
+                                                        CommandParameter="{Binding Tag}"
+                                                        Content="×"
+                                                        FontSize="12"
+                                                        FontWeight="Bold"
+                                                        Foreground="{DynamicResource ErrorBrush}"
+                                                        Padding="4,0"
+                                                        ToolTip.Tip="Unsubscribe from this tag" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!--  Empty State  -->
+                                <Border
+                                    Background="{DynamicResource SectionBackgroundBrush}"
+                                    CornerRadius="6"
+                                    IsVisible="{Binding SettingsTab.Subscriptions.Count, Converter={x:Static ObjectConverters.Equal}, ConverterParameter='0'}"
+                                    Padding="16">
+                                    <StackPanel HorizontalAlignment="Center" Spacing="8">
+                                        <TextBlock
+                                            Classes="body"
+                                            FontStyle="Italic"
+                                            Foreground="{DynamicResource SecondaryTextBrush}"
+                                            HorizontalAlignment="Center"
+                                            Text="No active subscriptions" />
+                                        <TextBlock
+                                            Classes="caption"
+                                            HorizontalAlignment="Center"
+                                            Text="Add subscriptions in the Recent Questions tab" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <!--  Subscription Actions  -->
+                            <StackPanel
+                                Margin="0,8,0,0"
+                                Orientation="Horizontal"
+                                Spacing="12">
+                                <Button
+                                    Classes="danger"
+                                    Command="{Binding SettingsTab.ClearAllSubscriptionsCommand}"
+                                    Content="🗑️ Clear All Subscriptions"
+                                    IsEnabled="{Binding SettingsTab.Subscriptions.Count, Converter={StaticResource GreaterThanConverter}, ConverterParameter='0'}"
+                                    Padding="12,8" />
+                                <TextBlock
+                                    Classes="caption"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    Text="Remove all active tag subscriptions"
+                                    VerticalAlignment="Center" />
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
                     <!--  Reset Section  -->
-                    <Border
-                        Background="#FFF3E0"
-                        CornerRadius="8"
-                        Padding="15">
-                        <StackPanel Spacing="12">
-                            <TextBlock
-                                FontSize="16"
-                                FontWeight="Bold"
-                                Text="Application Settings" />
+                    <Border Background="{DynamicResource SectionBackgroundBrush}" Classes="section-card">
+                        <StackPanel Spacing="16">
+                            <TextBlock Classes="header-medium" Text="⚙️ Application Settings" />
 
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
                                 <Button
-                                    Background="#795548"
+                                    Classes="warning"
                                     Command="{Binding SettingsTab.ResetToDefaultsCommand}"
-                                    Content="Reset to Defaults"
-                                    Foreground="White"
-                                    Padding="12,8" />
-                                <TextBlock
-                                    FontSize="11"
-                                    Foreground="Gray"
-                                    MaxWidth="300"
-                                    Text="Reset all settings to their default values"
-                                    TextWrapping="Wrap"
-                                    VerticalAlignment="Center" />
+                                    Content="🔄 Reset to Defaults"
+                                    Padding="14,10" />
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Classes="body" Text="Reset all settings to their default values" />
+                                    <TextBlock
+                                        Classes="caption"
+                                        Foreground="{DynamicResource SecondaryTextBrush}"
+                                        Text="This will reset all your preferences to factory defaults" />
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
                     </Border>
