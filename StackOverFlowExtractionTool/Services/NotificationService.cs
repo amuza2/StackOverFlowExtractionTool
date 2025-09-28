@@ -10,6 +10,7 @@ using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using StackOverFlowExtractionTool.Models;
+using StackOverFlowExtractionTool.ViewModels;
 using Notification = StackOverFlowExtractionTool.Models.Notification;
 
 namespace StackOverFlowExtractionTool.Services;
@@ -21,8 +22,13 @@ public partial class NotificationService : INotificationService
     private readonly List<TagSubscription> _subscriptions = new();
     private WindowNotificationManager? _notificationManager;
     private CancellationTokenSource? _monitoringCts;
+    private readonly IAppSettingsService _appSettingsService;
     private bool _isMonitoring;
     private bool _enablePopupNotifications = true;
+    private int _notificationDuration;
+    private int _monitoringInterval = 1;
+    public bool IsMonitoring => _isMonitoring;
+    
     
     public event EventHandler<Notification>? NotificationReceived;
     public event EventHandler<StackOverflowQuestion>? NewQuestionDetected;
@@ -30,25 +36,16 @@ public partial class NotificationService : INotificationService
 
     public NotificationService(
         IStackOverflowService stackOverflowService,
-        ILogger<NotificationService> logger)
+        ILogger<NotificationService> logger, IAppSettingsService appSettingsService)
     {
         _stackOverflowService = stackOverflowService;
         _logger = logger;
+        _appSettingsService = appSettingsService;
     }
-
-    public bool TogglePopupNotifications()
+    
+    public bool GetPopupNotificationsEnabled()
     {
-        _enablePopupNotifications = !_enablePopupNotifications;
-        
-        if (_enablePopupNotifications)
-        {
-            Console.WriteLine("==> Toggle popup notifications: Enabled");
-        }
-        else
-        {
-            Console.WriteLine("==> Toggle popup notifications: Disabled");
-        }
-        return _enablePopupNotifications;
+        return _appSettingsService?.GetSetting<bool>(nameof(SettingsViewModel.EnablePopupNotification), true) ?? true;
     }
     
     public void SetNotificationManager(WindowNotificationManager notificationManager)
@@ -98,6 +95,18 @@ public partial class NotificationService : INotificationService
     private readonly ConcurrentDictionary<int, string> _activeNotifications = new();
     private void ShowSystemNotification(string title, string message, string url)
     {
+        if (!GetPopupNotificationsEnabled())
+        {
+            Console.WriteLine("Popup notifications are disabled, skipping...");
+            return;
+        }
+
+        if (GetNotificationSoundEnabled())
+        {
+            Console.WriteLine("Sound notification is enabled!");
+            PlaySound();
+        }
+        
         try
         {
             var iconPath = String.Empty;
@@ -120,15 +129,17 @@ public partial class NotificationService : INotificationService
             // Use icon only if file exists, otherwise use a standard icon name
             var iconArg = File.Exists(iconPath) 
                 ? $"--icon=\"{iconPath}\"" 
-                : "--icon=dialog-information"; // or "web-browser", "mail-unread", etc.
-
-        
+                : "--icon=dialog-information";
+            
+            // Convert seconds to milliseconds for notify-send
+            var expireTime = _notificationDuration * 1000;
+            
             var startInfo = new ProcessStartInfo
             {
                 FileName = "notify-send",
                 Arguments = $"--app-name=\"StackOverflow\" " +
                             $"--urgency=normal " +
-                            $"--expire-time=9000 " +
+                            $"--expire-time={expireTime} " +
                             $"--category=im.received " +
                             $"{iconArg} " +
                             $"--hint=string:x-canonical-private-synchronous:stackoverflow " +
@@ -154,7 +165,7 @@ public partial class NotificationService : INotificationService
                         var output = await process.StandardOutput.ReadToEndAsync();
                         await process.WaitForExitAsync();
 
-                        // Only open if this specific notification was clicked (output contains "default")
+                        // Only open if this specific notification was clicked
                         // and not if it just expired (process.ExitCode == 0 without output)
                         if (output.Trim() == "default" &&
                             _activeNotifications.TryRemove(process.Id, out string? storedUrl))
@@ -235,6 +246,12 @@ public partial class NotificationService : INotificationService
         if(!isActiveTag && _isMonitoring)
             StopMonitoring();
     }
+    
+    public void SetMonitoringInterval(int minutes)
+    {
+        _monitoringInterval = Math.Clamp(minutes, 1, 60); // Limit between 1-60 minutes
+        Console.WriteLine($"Monitoring interval set to {_monitoringInterval} minutes");
+    }
 
     public List<TagSubscription> GetSubscriptions() => 
         _subscriptions.Where(s => s.IsActive).ToList();
@@ -259,7 +276,7 @@ public partial class NotificationService : INotificationService
                 Console.WriteLine($"=== MONITORING CYCLE {cycle} at {DateTime.Now:HH:mm:ss} ===");
                 
                 await CheckForNewQuestionsAsync();
-                await Task.Delay(TimeSpan.FromMinutes(1), _monitoringCts.Token);
+                await Task.Delay(TimeSpan.FromMinutes(_monitoringInterval), _monitoringCts.Token);
             }
         }
         catch (TaskCanceledException)
@@ -280,6 +297,8 @@ public partial class NotificationService : INotificationService
 
     public void StopMonitoring()
     {
+        if (!_isMonitoring) return;
+        
         _monitoringCts?.Cancel();
         _isMonitoring = false;
         _logger.LogInformation("Stopped tag monitoring service");
@@ -352,6 +371,46 @@ public partial class NotificationService : INotificationService
         }
         Console.WriteLine("=== CHECK COMPLETE ===");
     }
+
+    public bool GetNotificationSoundEnabled()
+    {
+        return _appSettingsService?.GetSetting<bool>(nameof(SettingsViewModel.EnableNotificationSound), true) ?? true;
+    }
+    
+    public void PlaySound()
+    {
+        try
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "beep",
+                Arguments = "-f 1000 -l 300",
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            Process.Start(startInfo)?.WaitForExit(500);
+        }
+        catch
+        {
+            try
+            {
+                // Fallback to console beep
+                Console.Beep(1000, 300);
+            }
+            catch
+            {
+                // Final fallback
+                Console.WriteLine("🔔 Test sound!");
+            }
+        }
+    }
+
+    public void SetNotificationDuration(int seconds)
+    {
+        _notificationDuration = Math.Clamp(seconds, 2, 30);
+        _logger.LogInformation("Notification duration set to {Seconds} seconds", _notificationDuration);
+    }
     
     public void TestNotification()
     {
@@ -370,5 +429,6 @@ public partial class NotificationService : INotificationService
         };
 
         ShowNotification(testQuestion, "test");
+        PlaySound();
     }
 }

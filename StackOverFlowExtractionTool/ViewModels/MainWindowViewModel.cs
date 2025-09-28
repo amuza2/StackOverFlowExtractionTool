@@ -36,7 +36,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         IStackOverflowService stackOverflowService, 
         ICacheService cacheService, 
         INotificationService notificationService, 
-        NotificationViewModel notificationViewModel)
+        NotificationViewModel notificationViewModel,
+        IAppSettingsService appSettingsService)
     {
         _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         NotificationViewModel = notificationViewModel ?? throw new ArgumentNullException(nameof(notificationViewModel));
@@ -44,7 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         // Initialize tab view models
         SearchTab = new SearchTabViewModel(stackOverflowService, cacheService, notificationService);
         RecentQuestionsTab = new RecentQuestionsViewModel(notificationService, notificationViewModel);
-        SettingsTab = new SettingsViewModel(notificationService);
+        SettingsTab = new SettingsViewModel(notificationService, appSettingsService, cacheService);
         
         // Subscribe to status message changes from SearchTab
         SearchTab.PropertyChanged += (sender, e) =>
@@ -59,6 +60,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _notificationService.NotificationReceived += OnNotificationReceived;
         _notificationService.NewQuestionDetected += OnNewQuestionDetected;
     }
+    
+    public MainWindowViewModel() : this(null!, null!, null!, null!, null!) { }
 
     private void OnNewQuestionDetected(object? sender, StackOverflowQuestion question)
     {
@@ -89,7 +92,4 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             _disposed = true;
         }
     }
-
-    public MainWindowViewModel() : this(null!, null!, null!, null!) { }
-
 }

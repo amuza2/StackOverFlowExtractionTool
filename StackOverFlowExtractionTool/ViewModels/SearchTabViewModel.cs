@@ -44,13 +44,7 @@ public partial class SearchTabViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isUsingCache;
-
-    [ObservableProperty]
-    private bool _canGoToPreviousPage;
-
-    [ObservableProperty]
-    private bool _canGoToNextPage;
-
+    
     public FilterOptions FilterOptions { get; } = new();
     public List<PageSizeOption> PageSizes { get; } = new()
     {
@@ -61,10 +55,6 @@ public partial class SearchTabViewModel : ViewModelBase
     [ObservableProperty]
     private PageSizeOption _selectedPageSize;
     
-    [ObservableProperty] private bool _enablePopupNotification = true;
-    public string NotificationPopupState => EnablePopupNotification ? "🔔 Pop-up Enabled" : "🔕 Pop-up Disabled";
-    public string BellIcon => EnablePopupNotification ? "🔔" : "🔕";
-
     public SearchTabViewModel(IStackOverflowService stackOverflowService, ICacheService cacheService, INotificationService notificationService)
     {
         _stackOverflowService = stackOverflowService;
@@ -276,13 +266,4 @@ public partial class SearchTabViewModel : ViewModelBase
         var timeSegment = DateTime.Now.ToString("yyyyMMddHH");
         return $"questions_{Tag.ToLowerInvariant()}_size{SelectedPageSize.Value}_{timeSegment}";
     }
-    
-    [RelayCommand]
-    private void ToggleNotificationPopup()
-    {
-        EnablePopupNotification = _notificationService.TogglePopupNotifications();
-        OnPropertyChanged(nameof(NotificationPopupState));
-        OnPropertyChanged(nameof(BellIcon));
-    }
-    
 }

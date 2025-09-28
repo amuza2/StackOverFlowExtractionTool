@@ -16,6 +16,12 @@ public interface INotificationService
     event EventHandler<Notification>? NotificationReceived;
     event EventHandler<StackOverflowQuestion>? NewQuestionDetected;
     public event EventHandler? SubscriptionChanged;
-    bool TogglePopupNotifications();
+    // void SetNotificationSound(bool enable);
+    void SetNotificationDuration(int seconds);
+    bool GetPopupNotificationsEnabled();
     void TestNotification();
+    void PlaySound();
+    bool GetNotificationSoundEnabled();
+    bool IsMonitoring { get; }
+    void SetMonitoringInterval(int minutes);
 }
