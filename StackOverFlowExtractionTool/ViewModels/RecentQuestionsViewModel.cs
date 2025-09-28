@@ -124,9 +124,11 @@ public partial class RecentQuestionsViewModel : ViewModelBase
 
         RecentQuestions.Insert(0, question);
         ApplyFilter();
-
+        
         // Keep only recent 50 questions
-        if (RecentQuestions.Count > 50)
+        var maxQuestions = 50;
+        
+        if (RecentQuestions.Count > maxQuestions)
         {
             RecentQuestions.RemoveAt(RecentQuestions.Count - 1);
         }

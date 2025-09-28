@@ -159,7 +159,7 @@
 
                     <!--  Status  -->
                     <Border
-                        Background="#F8F9FA"
+                        Background="DarkGray"
                         CornerRadius="4"
                         Margin="0,10,0,0"
                         Padding="10,8">
@@ -693,6 +693,386 @@
                     </ListBox.Styles>
                 </ListBox>
             </DockPanel>
+        </TabItem>
+
+        <!--  Tab 3: Settings  -->
+        <TabItem Header="Settings">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="20" Spacing="20">
+
+                    <!--  Notification Settings Section  -->
+                    <Border
+                        Background="DarkGray"
+                        CornerRadius="8"
+                        Padding="15">
+                        <StackPanel Spacing="12">
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Text="Notification Settings" />
+
+                            <!--  Pop-up Notifications  -->
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <ToggleButton
+                                    Height="25"
+                                    IsChecked="{Binding SettingsTab.EnablePopupNotification}"
+                                    Width="50">
+                                    <ToggleButton.Styles>
+                                        <Style Selector="ToggleButton:checked">
+                                            <Setter Property="Background" Value="#4CAF50" />
+                                        </Style>
+                                        <Style Selector="ToggleButton:not(:checked)">
+                                            <Setter Property="Background" Value="#CCCCCC" />
+                                        </Style>
+                                    </ToggleButton.Styles>
+                                </ToggleButton>
+                                <StackPanel>
+                                    <TextBlock FontWeight="SemiBold" Text="Pop-up Notifications" />
+                                    <TextBlock
+                                        FontSize="11"
+                                        Foreground="Gray"
+                                        Text="Show desktop notifications for new questions" />
+                                </StackPanel>
+                                <TextBlock
+                                    Margin="10,0,0,0"
+                                    Text="{Binding SettingsTab.NotificationPopupState}"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+
+                            <!--  Notification Sound  -->
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <ToggleButton
+                                    Height="25"
+                                    IsChecked="{Binding SettingsTab.EnableNotificationSound}"
+                                    Width="50">
+                                    <ToggleButton.Styles>
+                                        <Style Selector="ToggleButton:checked">
+                                            <Setter Property="Background" Value="#4CAF50" />
+                                        </Style>
+                                        <Style Selector="ToggleButton:not(:checked)">
+                                            <Setter Property="Background" Value="#CCCCCC" />
+                                        </Style>
+                                    </ToggleButton.Styles>
+                                </ToggleButton>
+                                <StackPanel>
+                                    <TextBlock FontWeight="SemiBold" Text="Notification Sound" />
+                                    <TextBlock
+                                        FontSize="11"
+                                        Foreground="Gray"
+                                        Text="Play sound with notifications" />
+                                </StackPanel>
+                                <TextBlock
+                                    Margin="10,0,0,0"
+                                    Text="{Binding SettingsTab.SoundIcon}"
+                                    VerticalAlignment="Center" />
+                                <Button
+                                    Command="{Binding SettingsTab.TestSoundCommand}"
+                                    Content="Test Sound"
+                                    IsEnabled="{Binding SettingsTab.EnableNotificationSound}"
+                                    Margin="10,0,0,0"
+                                    Padding="8,4" />
+                            </StackPanel>
+
+                            <!--  Notification Duration  -->
+                            <StackPanel Spacing="5">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock FontWeight="SemiBold" Text="Notification Duration" />
+                                    <TextBlock Text="{Binding SettingsTab.NotificationDuration, StringFormat='{}{0} seconds'}" />
+                                </StackPanel>
+                                <TextBlock
+                                    FontSize="11"
+                                    Foreground="Gray"
+                                    Text="How long notifications stay visible" />
+                                <Slider
+                                    Margin="0,5,0,0"
+                                    Maximum="30"
+                                    Minimum="2"
+                                    TickFrequency="1"
+                                    TickPlacement="BottomRight"
+                                    Value="{Binding SettingsTab.NotificationDuration}" />
+                            </StackPanel>
+
+                            <!--  Test Notification Button  -->
+                            <Button
+                                Background="#2196F3"
+                                Command="{Binding SettingsTab.TestNotificationCommand}"
+                                Content="Test Notification"
+                                Foreground="White"
+                                HorizontalAlignment="Left"
+                                Margin="0,10,0,0"
+                                Padding="10,6" />
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Monitoring Settings Section  -->
+                    <Border
+                        Background="DarkGray"
+                        CornerRadius="8"
+                        Padding="15">
+                        <StackPanel Spacing="12">
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Text="Monitoring Settings" />
+
+                            <!--  Monitoring Status  -->
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock
+                                    FontSize="16"
+                                    Text="{Binding SettingsTab.MonitoringIcon}"
+                                    VerticalAlignment="Center" />
+                                <TextBlock
+                                    FontWeight="SemiBold"
+                                    Text="{Binding SettingsTab.MonitoringStatus}"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+
+                            <!--  Monitoring Toggle  -->
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <ToggleButton
+                                    Command="{Binding SettingsTab.ToggleMonitoringCommand}"
+                                    Height="25"
+                                    Width="50">
+                                    <ToggleButton.Styles>
+                                        <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="#4CAF50" />
+                                        </Style>
+                                        <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="#CCCCCC" />
+                                        </Style>
+                                    </ToggleButton.Styles>
+                                </ToggleButton>
+
+                                <StackPanel>
+                                    <TextBlock FontWeight="SemiBold" Text="Real-time Monitoring" />
+                                    <TextBlock
+                                        FontSize="11"
+                                        Foreground="Gray"
+                                        Text="Continuously monitor for new questions" />
+                                </StackPanel>
+                                <!--  <Button  -->
+                                <!--  Background="{Binding SettingsTab.IsMonitoring, Converter={StaticResource BooleanToActiveColorConverter}}"  -->
+                                <!--  Command="{Binding SettingsTab.ToggleMonitoringCommand}"  -->
+                                <!--  Content="{Binding SettingsTab.IsMonitoring, Converter={x:Static BoolConverters.Not}, ConverterParameter='Start Monitoring:Stop Monitoring'}"  -->
+                                <!--  Foreground="White"  -->
+                                <!--  Margin="10,0,0,0"  -->
+                                <!--  Padding="10,6" />  -->
+                            </StackPanel>
+
+                            <!--  Auto-start Monitoring  -->
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <CheckBox IsChecked="{Binding SettingsTab.AutoStartMonitoring}" />
+                                <StackPanel>
+                                    <TextBlock FontWeight="SemiBold" Text="Auto-start Monitoring" />
+                                    <TextBlock
+                                        FontSize="11"
+                                        Foreground="Gray"
+                                        Text="Start monitoring automatically when application launches" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Monitoring Interval Setting  -->
+                    <StackPanel Spacing="5">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock FontWeight="SemiBold" Text="Monitoring Interval" />
+                            <TextBlock Text="{Binding SettingsTab.MonitoringInterval, StringFormat='{}{0} minutes'}" />
+                        </StackPanel>
+                        <TextBlock
+                            FontSize="11"
+                            Foreground="Gray"
+                            Text="How often to check for new questions" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Slider
+                                Maximum="60"
+                                Minimum="1"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                Value="{Binding SettingsTab.MonitoringInterval}"
+                                Width="200" />
+                            <StackPanel>
+                                <Button
+                                    Command="{Binding SettingsTab.IncreaseMonitoringIntervalCommand}"
+                                    Content="+"
+                                    Height="25"
+                                    Margin="2"
+                                    Width="30" />
+                                <Button
+                                    Command="{Binding SettingsTab.DecreaseMonitoringIntervalCommand}"
+                                    Content="-"
+                                    Height="25"
+                                    Margin="2"
+                                    Width="30" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock
+                            FontSize="10"
+                            Foreground="Gray"
+                            Text="Range: 1-60 minutes" />
+                    </StackPanel>
+
+                    <!--  Data Management Section  -->
+                    <Border
+                        Background="DarkGray"
+                        CornerRadius="8"
+                        Padding="15">
+                        <StackPanel Spacing="12">
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Text="Data Management" />
+
+                            <!--  Maximum Recent Questions  -->
+                            <StackPanel Spacing="5">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock FontWeight="SemiBold" Text="Maximum Recent Questions" />
+                                    <TextBlock Text="{Binding SettingsTab.MaxRecentQuestions}" />
+                                </StackPanel>
+                                <TextBlock
+                                    FontSize="11"
+                                    Foreground="Gray"
+                                    Text="Maximum number of recent questions to keep in memory" />
+                                <Slider
+                                    Margin="0,5,0,0"
+                                    Maximum="200"
+                                    Minimum="10"
+                                    TickFrequency="10"
+                                    TickPlacement="BottomRight"
+                                    Value="{Binding SettingsTab.MaxRecentQuestions}" />
+                            </StackPanel>
+
+                            <!--  Cache Expiration  -->
+                            <StackPanel Spacing="5">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock FontWeight="SemiBold" Text="Cache Expiration" />
+                                    <TextBlock Text="{Binding SettingsTab.CacheExpirationHours, StringFormat='{}{0} hours'}" />
+                                </StackPanel>
+                                <TextBlock
+                                    FontSize="11"
+                                    Foreground="Gray"
+                                    Text="How long to keep cached data before refreshing" />
+                                <Slider
+                                    Margin="0,5,0,0"
+                                    Maximum="168"
+                                    Minimum="1"
+                                    TickFrequency="24"
+                                    TickPlacement="BottomRight"
+                                    Value="{Binding SettingsTab.CacheExpirationHours}" />
+                            </StackPanel>
+
+                            <!--  Cache Statistics  -->
+                            <Border
+                                Background="White"
+                                CornerRadius="4"
+                                Margin="0,10,0,0"
+                                Padding="10">
+                                <StackPanel>
+                                    <TextBlock
+                                        FontWeight="SemiBold"
+                                        Margin="0,0,0,5"
+                                        Text="Cache Statistics" />
+                                    <Grid
+                                        ColumnDefinitions="Auto,*,Auto,*"
+                                        Margin="0,2"
+                                        RowDefinitions="Auto,Auto">
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Grid.Row="0"
+                                            Text="Total Requests:" />
+                                        <TextBlock
+                                            FontWeight="SemiBold"
+                                            Grid.Column="1"
+                                            Grid.Row="0"
+                                            Margin="10,0,0,0"
+                                            Text="{Binding SettingsTab.TotalCacheRequests}" />
+
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Grid.Row="0"
+                                            Margin="20,0,0,0"
+                                            Text="Cache Hits:" />
+                                        <TextBlock
+                                            FontWeight="SemiBold"
+                                            Foreground="#4CAF50"
+                                            Grid.Column="3"
+                                            Grid.Row="0"
+                                            Margin="10,0,0,0"
+                                            Text="{Binding SettingsTab.CacheHits}" />
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Grid.Row="1"
+                                            Text="Cache Misses:" />
+                                        <TextBlock
+                                            FontWeight="SemiBold"
+                                            Foreground="#F44336"
+                                            Grid.Column="1"
+                                            Grid.Row="1"
+                                            Margin="10,0,0,0"
+                                            Text="{Binding SettingsTab.CacheMisses}" />
+
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Grid.Row="1"
+                                            Margin="20,0,0,0"
+                                            Text="Status:" />
+                                        <TextBlock
+                                            FontWeight="SemiBold"
+                                            Grid.Column="3"
+                                            Grid.Row="1"
+                                            Margin="10,0,0,0"
+                                            Text="{Binding SettingsTab.CacheStatus}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!--  Cache Actions  -->
+                            <StackPanel
+                                Margin="0,10,0,0"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                                <Button
+                                    Background="#FF9800"
+                                    Command="{Binding SettingsTab.ClearCacheCommand}"
+                                    Content="Clear Cache"
+                                    Foreground="White"
+                                    Padding="10,6" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Reset Section  -->
+                    <Border
+                        Background="#FFF3E0"
+                        CornerRadius="8"
+                        Padding="15">
+                        <StackPanel Spacing="12">
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Text="Application Settings" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Button
+                                    Background="#795548"
+                                    Command="{Binding SettingsTab.ResetToDefaultsCommand}"
+                                    Content="Reset to Defaults"
+                                    Foreground="White"
+                                    Padding="12,8" />
+                                <TextBlock
+                                    FontSize="11"
+                                    Foreground="Gray"
+                                    MaxWidth="300"
+                                    Text="Reset all settings to their default values"
+                                    TextWrapping="Wrap"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
         </TabItem>
     </TabControl>
 

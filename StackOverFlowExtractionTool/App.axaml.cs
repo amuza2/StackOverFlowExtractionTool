@@ -45,6 +45,7 @@ public partial class App : Application
         });
         
         collection.AddSingleton<ICacheService, CacheService>();
+        collection.AddSingleton<IAppSettingsService, AppSettingsService>();
         collection.AddSingleton<StackOverflowService>();
         collection.AddSingleton<IStackOverflowService>(provider =>
         {

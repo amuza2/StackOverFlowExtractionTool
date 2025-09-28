@@ -20,6 +20,8 @@
         <converters:StringEqualityToForegroundConverter x:Key="StringEqualityToForegroundConverter" />
         <converters:BooleanToTagBackgroundConverter x:Key="BooleanToTagBackgroundConverter" />
         <converters:BooleanToTagForegroundConverter x:Key="BooleanToTagForegroundConverter" />
+        <converters:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+        <converters:BooleanToActiveColorConverter x:Key="BooleanToActiveColorConverter" />
 
     </Application.Resources>
 
