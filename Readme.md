@@ -7,13 +7,14 @@ Search, filter, subscribe and get notified to the recent questions
 
 ## Screenshots
 
-<img width="711" height="939" alt="image" src="https://github.com/user-attachments/assets/71dabb35-4856-40cd-8a56-a6144b8dea02" />
+<img width="700" height="935" alt="image" src="https://github.com/user-attachments/assets/c48ca1a4-5ca7-4e9d-85f2-97976fa3adf0" />
 
-<img width="711" height="936" alt="image" src="https://github.com/user-attachments/assets/7ac01e1f-97f9-4d98-bda6-53c737708faf" />
+<img width="702" height="935" alt="image" src="https://github.com/user-attachments/assets/5c3281c7-1137-4c05-b9c5-464312b84ba2" />
 
-<img width="384" height="591" alt="image" src="https://github.com/user-attachments/assets/212fd03a-1edb-4afb-8b49-5a347aab8e6e" />
+<img width="701" height="930" alt="image" src="https://github.com/user-attachments/assets/4d24905d-898a-4f30-a8c8-c42d7adc60b7" />
 
-Note: currently I am focusing on the implementation, once I finish the features that I planned I will improve the design.
+<img width="359" height="537" alt="image" src="https://github.com/user-attachments/assets/0febb095-2702-4802-9c53-680f015512b2" />
+
 
 ## Getting Started
 
@@ -47,4 +48,5 @@ If you encounter any issues or have questions:
 - Avalonia UI team for the excellent cross-platform framework
 - Microsoft for the Community Toolkit
 - The open-source community for inspiration and resources
+
 
