@@ -37,7 +37,7 @@
 
     <Style Selector="TabItem:pointerover /template/ ContentPresenter">
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
-        <Setter Property="Background" Value="{DynamicResource HoverBackgroundBrush}" />
+        <Setter Property="Background" Value="Transparent" />
     </Style>
 
     <!--  TabItem Header with Badge  -->

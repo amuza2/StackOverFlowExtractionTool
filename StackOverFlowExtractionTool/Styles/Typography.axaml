@@ -31,6 +31,19 @@
 
     <Style Selector="TextBlock.body">
         <Setter Property="FontSize" Value="13" />
+        <Setter Property="Opacity" Value="0.8" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.body:pointerover">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Opacity" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.body:pressed">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Opacity" Value="1" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
     </Style>
 

@@ -787,19 +787,9 @@
                             <!--  Pop-up Notifications  -->
                             <StackPanel Orientation="Horizontal" Spacing="12">
                                 <ToggleButton
-                                    Classes="notification-toggle"
                                     Height="28"
                                     IsChecked="{Binding SettingsTab.EnablePopupNotification}"
-                                    Width="52">
-                                    <ToggleButton.Styles>
-                                        <Style Selector="ToggleButton.notification-toggle:checked">
-                                            <Setter Property="Background" Value="{DynamicResource OnlineBrush}" />
-                                        </Style>
-                                        <Style Selector="ToggleButton.notification-toggle:not(:checked)">
-                                            <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
-                                        </Style>
-                                    </ToggleButton.Styles>
-                                </ToggleButton>
+                                    Width="52" />
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock
                                         Classes="body"
@@ -818,19 +808,9 @@
                             <!--  Notification Sound  -->
                             <StackPanel Orientation="Horizontal" Spacing="12">
                                 <ToggleButton
-                                    Classes="sound-toggle"
                                     Height="28"
                                     IsChecked="{Binding SettingsTab.EnableNotificationSound}"
-                                    Width="52">
-                                    <ToggleButton.Styles>
-                                        <Style Selector="ToggleButton.sound-toggle:checked">
-                                            <Setter Property="Background" Value="{DynamicResource OnlineBrush}" />
-                                        </Style>
-                                        <Style Selector="ToggleButton.sound-toggle:not(:checked)">
-                                            <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
-                                        </Style>
-                                    </ToggleButton.Styles>
-                                </ToggleButton>
+                                    Width="52" />
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock
                                         Classes="body"
@@ -917,19 +897,9 @@
                             <!--  Monitoring Toggle  -->
                             <StackPanel Orientation="Horizontal" Spacing="12">
                                 <ToggleButton
-                                    Classes="monitoring-toggle"
                                     Command="{Binding SettingsTab.ToggleMonitoringCommand}"
                                     Height="28"
-                                    Width="52">
-                                    <ToggleButton.Styles>
-                                        <Style Selector="ToggleButton.monitoring-toggle:checked">
-                                            <Setter Property="Background" Value="{DynamicResource OnlineBrush}" />
-                                        </Style>
-                                        <Style Selector="ToggleButton.monitoring-toggle:not(:checked)">
-                                            <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
-                                        </Style>
-                                    </ToggleButton.Styles>
-                                </ToggleButton>
+                                    Width="52" />
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock
                                         Classes="body"
