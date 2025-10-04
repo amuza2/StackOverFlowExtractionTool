@@ -5,7 +5,6 @@
         </Border>
     </Design.PreviewWith>
 
-    <!--  Add Styles Here  -->
     <!--  Base Button Style  -->
     <Style Selector="Button">
         <Setter Property="Background" Value="Transparent" />
@@ -27,15 +26,19 @@
         <Setter Property="Background" Value="{DynamicResource BorderHoverBrush}" />
     </Style>
 
+
     <!--  Primary Button  -->
     <Style Selector="Button.primary">
         <Setter Property="Background" Value="{DynamicResource PrimaryButtonGradient}" />
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
         <Setter Property="BorderThickness" Value="0" />
     </Style>
 
     <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
-        <Setter Property="Opacity" Value="0.9" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryButtonGradient}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Opacity" Value="0.8" />
     </Style>
 
     <!--  Secondary Button  -->
@@ -45,18 +48,39 @@
         <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
     </Style>
 
+    <Style Selector="Button.secondary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentTextBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+        <Setter Property="Opacity" Value="0.8" />
+    </Style>
+
     <!--  Success Button  -->
     <Style Selector="Button.success">
         <Setter Property="Background" Value="{DynamicResource SuccessButtonGradient}" />
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
         <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="Button.success:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource SuccessButtonGradient}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Opacity" Value="0.8" />
     </Style>
 
     <!--  Danger Button  -->
     <Style Selector="Button.danger">
         <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
         <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Opacity" Value="0.8" />
     </Style>
 
     <!--  Ghost Button (minimal)  -->
@@ -68,6 +92,7 @@
 
     <Style Selector="Button.ghost:pointerover /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource HoverBackgroundBrush}" />
+        <Setter Property="Opacity" Value="0.8" />
     </Style>
 
     <!--  Icon Button  -->
@@ -77,6 +102,15 @@
         <Setter Property="Padding" Value="8" />
         <Setter Property="Width" Value="32" />
         <Setter Property="Height" Value="32" />
+    </Style>
+
+    <Style Selector="Button.icon:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Opacity" Value="0.8" />
     </Style>
 
     <!--  Filter Tag Button  -->
@@ -102,9 +136,15 @@
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
+    <Style Selector="Button.monitoring-action:pointerover /template/ ContentPresenter">
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Opacity" Value="0.8" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
     <!--  Warning button variant  -->
     <Style Selector="Button.warning">
-        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+        <Setter Property="Background" Value="{DynamicResource WarningTextBrush}" />
         <Setter Property="Foreground" Value="Black" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CornerRadius" Value="6" />
