@@ -1,0 +1,38 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!--  Add Controls for Previewer Here  -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!--  Add Styles Here  -->
+    <!--  Section Cards  -->
+    <Style Selector="Border.section-card">
+        <Setter Property="Background" Value="{DynamicResource SectionBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="20" />
+        <!-- <Setter Property="BoxShadow" Value="0 2 8 {DynamicResource BackgroundBrush}" /> -->
+    </Style>
+
+    <!--  Info Cards  -->
+    <Style Selector="Border.info-card">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="16" />
+    </Style>
+
+    <!--  Status Cards  -->
+    <Style Selector="Border.status-card">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="12" />
+    </Style>
+
+
+</Styles>

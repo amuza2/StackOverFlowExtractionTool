@@ -8,6 +8,13 @@
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://StackOverFlowExtractionTool/Styles/Colors.axaml" />
+                <ResourceInclude Source="avares://StackOverFlowExtractionTool/Styles/Brushes.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
         <converters:AnswerCountToColorConverter x:Key="AnswerCountToColorConverter" />
         <converters:BooleanToColorConverter x:Key="BooleanToColorConverter" />
         <converters:ScoreToColorConverter x:Key="ScoreToColorConverter" />
@@ -21,7 +28,9 @@
         <converters:BooleanToTagBackgroundConverter x:Key="BooleanToTagBackgroundConverter" />
         <converters:BooleanToTagForegroundConverter x:Key="BooleanToTagForegroundConverter" />
         <converters:BooleanToStringConverter x:Key="BooleanToStringConverter" />
-        <converters:BooleanToActiveColorConverter x:Key="BooleanToActiveColorConverter" />
+        <converters:BooleanToMonitoringBackgroundConverter x:Key="BooleanToMonitoringBackgroundConverter" />
+        <converters:BooleanToMonitoringButtonColorConverter x:Key="BooleanToMonitoringButtonColorConverter" />
+        <converters:BooleanToMonitoringDescriptionConverter x:Key="BooleanToMonitoringDescriptionConverter" />
 
     </Application.Resources>
 
@@ -31,5 +40,40 @@
 
     <Application.Styles>
         <FluentTheme />
+
+        <StyleInclude Source="avares://StackOverFlowExtractionTool/Styles/Typography.axaml" />
+        <StyleInclude Source="avares://StackOverFlowExtractionTool/Styles/ButtonStyles.axaml" />
+        <StyleInclude Source="avares://StackOverFlowExtractionTool/Styles/InputStyles.axaml" />
+        <StyleInclude Source="avares://StackOverFlowExtractionTool/Styles/ListBoxStyles.axaml" />
+        <StyleInclude Source="avares://StackOverFlowExtractionTool/Styles/TabControlStyles.axaml" />
+        <StyleInclude Source="avares://StackOverFlowExtractionTool/Styles/ToggleSwitchStyles.axaml" />
+        <StyleInclude Source="avares://StackOverFlowExtractionTool/Styles/ProgressBarStyles.axaml" />
+        <StyleInclude Source="avares://StackOverFlowExtractionTool/Styles/CardStyles.axaml" />
+
+
+        <!--  Keep your existing animated badge styles  -->
+        <Style Selector="Border.animatedBadge">
+            <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="Height" Value="18" />
+            <Setter Property="Width" Value="18" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Duration="0:0:0.3" Property="Opacity" />
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Border.animatedBadge[IsVisible=true]">
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+
+        <Style Selector="Border.animatedBadge[IsVisible=false]">
+            <Setter Property="Opacity" Value="0" />
+        </Style>
+
+
     </Application.Styles>
 </Application>

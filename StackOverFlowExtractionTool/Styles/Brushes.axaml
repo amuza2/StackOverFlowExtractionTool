@@ -1,0 +1,45 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  Add Resources Here  -->
+
+    <!--  Brushes based on colors  -->
+    <SolidColorBrush Color="{StaticResource ThemePrimaryColor}" x:Key="PrimaryBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeSecondaryColor}" x:Key="SecondaryBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeAccentColor}" x:Key="AccentBrush" />
+
+    <!--  Background Brushes  -->
+    <SolidColorBrush Color="{StaticResource ThemeBackgroundColor}" x:Key="BackgroundBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeCardBackground}" x:Key="CardBackgroundBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeSectionBackground}" x:Key="SectionBackgroundBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeHoverBackground}" x:Key="HoverBackgroundBrush" />
+
+    <!--  Text Brushes  -->
+    <SolidColorBrush Color="{StaticResource ThemePrimaryText}" x:Key="PrimaryTextBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeSecondaryText}" x:Key="SecondaryTextBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeAccentText}" x:Key="AccentTextBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeSuccessText}" x:Key="SuccessTextBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeWarningText}" x:Key="WarningTextBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeErrorText}" x:Key="ErrorTextBrush" />
+
+    <!--  Border Brushes  -->
+    <SolidColorBrush Color="{StaticResource ThemeBorderColor}" x:Key="BorderBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeBorderHover}" x:Key="BorderHoverBrush" />
+
+    <!--  Status Brushes  -->
+    <SolidColorBrush Color="{StaticResource ThemeOnlineColor}" x:Key="OnlineBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeOfflineColor}" x:Key="OfflineBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeBusyColor}" x:Key="BusyBrush" />
+    <SolidColorBrush Color="{StaticResource ThemeErrorText}" x:Key="ErrorBrush" />
+
+
+    <!--  Button Gradients  -->
+    <LinearGradientBrush EndPoint="1,1" StartPoint="0,0" x:Key="PrimaryButtonGradient">
+        <GradientStop Color="#6366F1" Offset="0" />
+        <GradientStop Color="#8B5CF6" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush EndPoint="1,1" StartPoint="0,0" x:Key="SuccessButtonGradient">
+        <GradientStop Color="#10B981" Offset="0" />
+        <GradientStop Color="#059669" Offset="1" />
+    </LinearGradientBrush>
+
+</ResourceDictionary>
