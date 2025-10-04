@@ -7,13 +7,16 @@ Search, filter, subscribe and get notified to the recent questions
 
 ## Screenshots
 
-<img width="700" height="935" alt="image" src="https://github.com/user-attachments/assets/c48ca1a4-5ca7-4e9d-85f2-97976fa3adf0" />
+<img width="709" height="848" alt="image" src="https://github.com/user-attachments/assets/ede82739-41a0-418d-a5d8-46f4003d00a9" />
 
-<img width="702" height="935" alt="image" src="https://github.com/user-attachments/assets/5c3281c7-1137-4c05-b9c5-464312b84ba2" />
 
-<img width="701" height="930" alt="image" src="https://github.com/user-attachments/assets/4d24905d-898a-4f30-a8c8-c42d7adc60b7" />
+<img width="706" height="847" alt="image" src="https://github.com/user-attachments/assets/df54d18d-9adc-4554-a3a0-e1d0b0c9bca6" />
 
-<img width="359" height="537" alt="image" src="https://github.com/user-attachments/assets/0febb095-2702-4802-9c53-680f015512b2" />
+
+<img width="706" height="842" alt="image" src="https://github.com/user-attachments/assets/54c5e3ec-3c01-4a28-aedb-c169567a8ee9" />
+
+
+<img width="401" height="574" alt="image" src="https://github.com/user-attachments/assets/37542975-e8b6-4d59-9c50-0d1ada8b5129" />
 
 
 ## Getting Started
@@ -48,5 +51,6 @@ If you encounter any issues or have questions:
 - Avalonia UI team for the excellent cross-platform framework
 - Microsoft for the Community Toolkit
 - The open-source community for inspiration and resources
+
 
 
